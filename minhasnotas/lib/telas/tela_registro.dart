@@ -69,6 +69,13 @@ class _TelaRegistroState extends State<TelaRegistro> {
             },
             child: const Text('Registrar'),
           ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context)
+                  .pushNamedAndRemoveUntil('/login/', (route) => false);
+            },
+            child: const Text('Já está registrado? Faça o Login aqui!'),
+          )
         ],
       ),
     );

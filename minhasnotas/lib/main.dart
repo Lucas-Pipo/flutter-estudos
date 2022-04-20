@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:minhasnotas/telas/tela_login.dart';
 import 'package:minhasnotas/telas/tela_registro.dart';
+import 'package:minhasnotas/telas/tela_verificacao_email.dart';
 import 'firebase_options.dart';
 
 void main() {
@@ -27,52 +28,28 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Home')),
-      body: FutureBuilder(
-        future: Firebase.initializeApp(
-          options: DefaultFirebaseOptions.currentPlatform,
-        ),
-        builder: (context, snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.done:
-              // final user = FirebaseAuth.instance.currentUser;
-              // if (user?.emailVerified ?? false) {
-              //   return const Text('Finalizado');
-              // } else {
-              //   return const TelaDeVerificacao();
-              // }
-              return const TelaLogin();
-            default:
-              return const Text('Carregando...');
-          }
-        },
+    return FutureBuilder(
+      future: Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
       ),
-    );
-  }
-}
-
-class TelaDeVerificacao extends StatefulWidget {
-  const TelaDeVerificacao({Key? key}) : super(key: key);
-
-  @override
-  State<TelaDeVerificacao> createState() => _TelaDeVerificacaoState();
-}
-
-class _TelaDeVerificacaoState extends State<TelaDeVerificacao> {
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const Text('Por favor verifique seu e-mail'),
-        TextButton(
-          onPressed: () async {
+      builder: (context, snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.done:
             final user = FirebaseAuth.instance.currentUser;
-            await user?.sendEmailVerification();
-          },
-          child: const Text('Me envie a confirmação de e-mail'),
-        )
-      ],
+            if (user != null) {
+              if (user.emailVerified) {
+                print('Email verificado');
+              } else {
+                return const TelaDeVerificacao();
+              }
+            } else {
+              return const TelaLogin();
+            }
+            return const Text('Feito');
+          default:
+            return const CircularProgressIndicator();
+        }
+      },
     );
   }
 }
