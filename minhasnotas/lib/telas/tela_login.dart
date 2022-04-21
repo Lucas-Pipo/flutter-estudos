@@ -56,6 +56,8 @@ class _TelaLoginState extends State<TelaLogin> {
                 final userCredential = await FirebaseAuth.instance
                     .signInWithEmailAndPassword(email: email, password: senha);
                 print(userCredential);
+                Navigator.of(context)
+                    .pushNamedAndRemoveUntil('/notas/', (route) => false);
               } on FirebaseAuthException catch (e) {
                 if (e.code == 'user-not-found') {
                   print('Usuário não encontrado');
