@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'dart:developer' as ferramentasdev show log;
 
 class TelaRegistro extends StatefulWidget {
   const TelaRegistro({Key? key}) : super(key: key);
@@ -22,7 +23,7 @@ class _TelaRegistroState extends State<TelaRegistro> {
   @override
   void dispose() {
     _email.dispose();
-    _senha.dispose(); // TODO: implement dispose
+    _senha.dispose(); 
     super.dispose();
   }
 
@@ -56,14 +57,14 @@ class _TelaRegistroState extends State<TelaRegistro> {
                 final userCredential = await FirebaseAuth.instance
                     .createUserWithEmailAndPassword(
                         email: email, password: senha);
-                print(userCredential);
+                ferramentasdev.log(userCredential.toString());
               } on FirebaseAuthException catch (e) {
                 if (e.code == 'weak-password') {
-                  print('Senha fraca');
+                  ferramentasdev.log('Senha fraca');
                 } else if (e.code == 'email-already-in-use') {
-                  print('E-mail já está em uso');
+                  ferramentasdev.log('E-mail já está em uso');
                 } else if (e.code == 'invalid-email') {
-                  print('Email inválido');
+                  ferramentasdev.log('Email inválido');
                 }
               }
             },

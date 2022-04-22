@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'dart:developer' as ferramentasdev show log;
 
 class TelaLogin extends StatefulWidget {
   const TelaLogin({Key? key}) : super(key: key);
@@ -55,14 +56,14 @@ class _TelaLoginState extends State<TelaLogin> {
               try {
                 final userCredential = await FirebaseAuth.instance
                     .signInWithEmailAndPassword(email: email, password: senha);
-                print(userCredential);
+                ferramentasdev.log(userCredential.toString());
                 Navigator.of(context)
                     .pushNamedAndRemoveUntil('/notas/', (route) => false);
               } on FirebaseAuthException catch (e) {
                 if (e.code == 'user-not-found') {
-                  print('Usuário não encontrado');
+                  ferramentasdev.log('Usuário não encontrado');
                 } else if (e.code == 'wrong-password') {
-                  print('Senha incorreta');
+                  ferramentasdev.log('Senha incorreta');
                 }
               }
             },

@@ -5,7 +5,6 @@ import 'package:minhasnotas/telas/tela_login.dart';
 import 'package:minhasnotas/telas/tela_registro.dart';
 import 'package:minhasnotas/telas/tela_verificacao_email.dart';
 import 'firebase_options.dart';
-import 'dart:developer' as ferramentasdev show log;
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
