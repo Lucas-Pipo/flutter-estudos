@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer' as ferramentasdev show log;
 
+import 'package:minhasnotas/constantes/rotas.dart';
+
 class TelaRegistro extends StatefulWidget {
   const TelaRegistro({Key? key}) : super(key: key);
 
@@ -73,7 +75,7 @@ class _TelaRegistroState extends State<TelaRegistro> {
           TextButton(
             onPressed: () {
               Navigator.of(context)
-                  .pushNamedAndRemoveUntil('/login/', (route) => false);
+                  .pushNamedAndRemoveUntil(loginRota, (route) => false);
             },
             child: const Text('Já está registrado? Faça o Login aqui!'),
           )

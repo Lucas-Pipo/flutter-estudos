@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer' as ferramentasdev show log;
 
+import 'package:minhasnotas/constantes/rotas.dart';
+
 class TelaLogin extends StatefulWidget {
   const TelaLogin({Key? key}) : super(key: key);
 
@@ -58,7 +60,7 @@ class _TelaLoginState extends State<TelaLogin> {
                     .signInWithEmailAndPassword(email: email, password: senha);
                 ferramentasdev.log(userCredential.toString());
                 Navigator.of(context)
-                    .pushNamedAndRemoveUntil('/notas/', (route) => false);
+                    .pushNamedAndRemoveUntil(notasRota, (route) => false);
               } on FirebaseAuthException catch (e) {
                 if (e.code == 'user-not-found') {
                   ferramentasdev.log('Usuário não encontrado');
@@ -72,7 +74,7 @@ class _TelaLoginState extends State<TelaLogin> {
           TextButton(
               onPressed: () {
                 Navigator.of(context)
-                    .pushNamedAndRemoveUntil('/registro/', (route) => false);
+                    .pushNamedAndRemoveUntil(registroRota, (route) => false);
               },
               child: const Text('Ainda não é registrado? Registre aqui!'))
         ],

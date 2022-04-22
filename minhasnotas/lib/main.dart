@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:minhasnotas/constantes/rotas.dart';
 import 'package:minhasnotas/telas/tela_login.dart';
 import 'package:minhasnotas/telas/tela_registro.dart';
 import 'package:minhasnotas/telas/tela_verificacao_email.dart';
@@ -16,9 +17,9 @@ void main() {
       ),
       home: const HomePage(),
       routes: {
-        '/login/': (context) => const TelaLogin(),
-        '/registro/': (context) => const TelaRegistro(),
-        '/notas/': (context) => const TelaDeNotas(),
+        loginRota: (context) => const TelaLogin(),
+        registroRota: (context) => const TelaRegistro(),
+        notasRota: (context) => const TelaDeNotas(),
       },
     ),
   );
@@ -78,7 +79,7 @@ class _TelaDeNotasState extends State<TelaDeNotas> {
                   if (deveDeslogar) {
                     await FirebaseAuth.instance.signOut();
                     Navigator.of(context).pushNamedAndRemoveUntil(
-                      '/login/',
+                      loginRota,
                       (_) => false,
                     );
                   }
@@ -105,7 +106,7 @@ Future<bool> dialogoLogOut(BuildContext context) {
     context: context,
     builder: (context) {
       return AlertDialog(
-        title: const Text('Descontar'),
+        title: const Text('Desconectar'),
         content: const Text('Tem certeza que você quer se desconectar?'),
         actions: [
           TextButton(
