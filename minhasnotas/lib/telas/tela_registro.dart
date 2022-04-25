@@ -80,6 +80,11 @@ class _TelaRegistroState extends State<TelaRegistro> {
                     context,
                     'E-mail inválido',
                   );
+                } else {
+                  await mostrarErroDialogo(
+                    context,
+                    'Erro: {e.code}',
+                  );
                 }
               } catch (e) {
                 await mostrarErroDialogo(

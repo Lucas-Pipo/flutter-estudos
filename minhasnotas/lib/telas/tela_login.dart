@@ -59,12 +59,15 @@ class _TelaLoginState extends State<TelaLogin> {
                   email: email,
                   password: senha,
                 );
-                if (FirebaseAuth.instance.currentUser?.emailVerified == true) {
+                final usuario = FirebaseAuth.instance.currentUser;
+                if (usuario?.emailVerified ?? false) {
                   Navigator.of(context).pushNamedAndRemoveUntil(
                     notasRota,
                     (route) => false,
                   );
                 } else {
+                  Navigator.of(context)
+                      .pushNamedAndRemoveUntil(verificarRotaEmail, (route) => false);
                   mostrarErroDialogo(context, 'Usuário não verificado');
                 }
               } on FirebaseAuthException catch (e) {
