@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'dart:developer' as ferramentasdev show log;
 
 import 'package:minhasnotas/constantes/rotas.dart';
+import 'package:minhasnotas/utilidades/mostrar_dialogo_erro.dart';
 
 class TelaRegistro extends StatefulWidget {
   const TelaRegistro({Key? key}) : super(key: key);
@@ -25,7 +26,7 @@ class _TelaRegistroState extends State<TelaRegistro> {
   @override
   void dispose() {
     _email.dispose();
-    _senha.dispose(); 
+    _senha.dispose();
     super.dispose();
   }
 
@@ -56,18 +57,35 @@ class _TelaRegistroState extends State<TelaRegistro> {
               final email = _email.text;
               final senha = _senha.text;
               try {
-                final userCredential = await FirebaseAuth.instance
-                    .createUserWithEmailAndPassword(
-                        email: email, password: senha);
-                ferramentasdev.log(userCredential.toString());
+                await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                  email: email,
+                  password: senha,
+                );
+                final usuario = FirebaseAuth.instance.currentUser;
+                await usuario?.sendEmailVerification();
+                Navigator.of(context).pushNamed(verificarRotaEmail);
               } on FirebaseAuthException catch (e) {
                 if (e.code == 'weak-password') {
-                  ferramentasdev.log('Senha fraca');
+                  await mostrarErroDialogo(
+                    context,
+                    'Senha fraca',
+                  );
                 } else if (e.code == 'email-already-in-use') {
-                  ferramentasdev.log('E-mail já está em uso');
+                  await mostrarErroDialogo(
+                    context,
+                    'Este e-mail já está em uso',
+                  );
                 } else if (e.code == 'invalid-email') {
-                  ferramentasdev.log('Email inválido');
+                  await mostrarErroDialogo(
+                    context,
+                    'E-mail inválido',
+                  );
                 }
+              } catch (e) {
+                await mostrarErroDialogo(
+                  context,
+                  e.toString(),
+                );
               }
             },
             child: const Text('Registrar'),

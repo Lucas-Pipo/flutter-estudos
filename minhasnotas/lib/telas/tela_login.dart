@@ -55,14 +55,18 @@ class _TelaLoginState extends State<TelaLogin> {
               final email = _email.text;
               final senha = _senha.text;
               try {
-                 await FirebaseAuth.instance.signInWithEmailAndPassword(
+                await FirebaseAuth.instance.signInWithEmailAndPassword(
                   email: email,
                   password: senha,
                 );
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                  notasRota,
-                  (route) => false,
-                );
+                if (FirebaseAuth.instance.currentUser?.emailVerified == true) {
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    notasRota,
+                    (route) => false,
+                  );
+                } else {
+                  mostrarErroDialogo(context, 'Usuário não verificado');
+                }
               } on FirebaseAuthException catch (e) {
                 if (e.code == 'user-not-found') {
                   await mostrarErroDialogo(

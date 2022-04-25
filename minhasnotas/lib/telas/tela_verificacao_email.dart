@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:minhasnotas/constantes/rotas.dart';
 
 class TelaDeVerificacao extends StatefulWidget {
   const TelaDeVerificacao({Key? key}) : super(key: key);
@@ -15,13 +16,24 @@ class _TelaDeVerificacaoState extends State<TelaDeVerificacao> {
       appBar: AppBar(title: const Text('Verificação de E-mail')),
       body: Column(
         children: [
-          const Text('Por favor verifique seu e-mail'),
+          const Text(
+              'Nós enviamos um e-mail de verificação. Por favor, abra o e-mail para verificar sua conta.'),
+          const Text(
+              'Caso você não tenha recebido seu e-mail ainda, por favor pressione o botão abaixo'),
           TextButton(
             onPressed: () async {
               final user = FirebaseAuth.instance.currentUser;
               await user?.sendEmailVerification();
             },
             child: const Text('Me envie a confirmação de e-mail'),
+          ),
+          TextButton(
+            onPressed: () async {
+              await FirebaseAuth.instance.signOut();
+              Navigator.of(context)
+                  .pushNamedAndRemoveUntil(registroRota, (route) => false);
+            },
+            child: const Text('Reiniciar'),
           )
         ],
       ),

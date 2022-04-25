@@ -20,6 +20,7 @@ void main() {
         loginRota: (context) => const TelaLogin(),
         registroRota: (context) => const TelaRegistro(),
         notasRota: (context) => const TelaDeNotas(),
+        verificarRotaEmail : (context) => const TelaDeVerificacao(),
       },
     ),
   );
