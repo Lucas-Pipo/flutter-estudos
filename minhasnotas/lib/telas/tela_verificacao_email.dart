@@ -1,6 +1,6 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:minhasnotas/constantes/rotas.dart';
+import 'package:minhasnotas/servi%C3%A7os/autentica%C3%A7%C3%A3o/servico_aut.dart';
 
 class TelaDeVerificacao extends StatefulWidget {
   const TelaDeVerificacao({Key? key}) : super(key: key);
@@ -22,14 +22,13 @@ class _TelaDeVerificacaoState extends State<TelaDeVerificacao> {
               'Caso você não tenha recebido seu e-mail ainda, por favor pressione o botão abaixo'),
           TextButton(
             onPressed: () async {
-              final user = FirebaseAuth.instance.currentUser;
-              await user?.sendEmailVerification();
+              await ServicoAut.firebase().sendEmailVerification();
             },
             child: const Text('Me envie a confirmação de e-mail'),
           ),
           TextButton(
             onPressed: () async {
-              await FirebaseAuth.instance.signOut();
+              await ServicoAut.firebase().logOut();
               Navigator.of(context)
                   .pushNamedAndRemoveUntil(registroRota, (route) => false);
             },

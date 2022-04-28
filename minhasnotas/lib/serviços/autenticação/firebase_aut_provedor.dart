@@ -1,3 +1,5 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:minhasnotas/firebase_options.dart';
 import 'package:minhasnotas/serviços/autenticação/usuario_aut.dart';
 import 'package:minhasnotas/serviços/autenticação/excecao_aut.dart';
 import 'package:minhasnotas/serviços/autenticação/provedor_aut.dart';
@@ -5,6 +7,13 @@ import 'package:firebase_auth/firebase_auth.dart'
     show FirebaseAuth, FirebaseAuthException;
 
 class FirebaseAuthProvider implements ProvedorAut {
+  @override
+  Future<void> initialize() async{
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  }
+
   @override
   Future<UsuarioAut> criarUsuario({
     required String email,

@@ -1,8 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'dart:developer' as ferramentasdev show log;
-
 import 'package:minhasnotas/constantes/rotas.dart';
+import 'package:minhasnotas/servi%C3%A7os/autentica%C3%A7%C3%A3o/excecao_aut.dart';
+import 'package:minhasnotas/servi%C3%A7os/autentica%C3%A7%C3%A3o/servico_aut.dart';
 import 'package:minhasnotas/utilidades/mostrar_dialogo_erro.dart';
 
 class TelaRegistro extends StatefulWidget {
@@ -57,39 +56,31 @@ class _TelaRegistroState extends State<TelaRegistro> {
               final email = _email.text;
               final senha = _senha.text;
               try {
-                await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                ServicoAut.firebase().criarUsuario(
                   email: email,
-                  password: senha,
+                  senha: senha,
                 );
-                final usuario = FirebaseAuth.instance.currentUser;
-                await usuario?.sendEmailVerification();
+                ServicoAut.firebase().sendEmailVerification();
                 Navigator.of(context).pushNamed(verificarRotaEmail);
-              } on FirebaseAuthException catch (e) {
-                if (e.code == 'weak-password') {
-                  await mostrarErroDialogo(
-                    context,
-                    'Senha fraca',
-                  );
-                } else if (e.code == 'email-already-in-use') {
-                  await mostrarErroDialogo(
-                    context,
-                    'Este e-mail já está em uso',
-                  );
-                } else if (e.code == 'invalid-email') {
-                  await mostrarErroDialogo(
-                    context,
-                    'E-mail inválido',
-                  );
-                } else {
-                  await mostrarErroDialogo(
-                    context,
-                    'Erro: {e.code}',
-                  );
-                }
-              } catch (e) {
+              } on SenhaFracaExcecao {
                 await mostrarErroDialogo(
                   context,
-                  e.toString(),
+                  'Senha fraca',
+                );
+              } on EmailEmUsoExececao {
+                await mostrarErroDialogo(
+                  context,
+                  'Este e-mail já está em uso',
+                );
+              } on EmailInvalidoExcecao {
+                await mostrarErroDialogo(
+                  context,
+                  'E-mail inválido',
+                );
+              } on GenericaExcecao {
+                await mostrarErroDialogo(
+                  context,
+                  'Falha ao Registrar',
                 );
               }
             },

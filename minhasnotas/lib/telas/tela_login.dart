@@ -1,6 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:minhasnotas/constantes/rotas.dart';
+import 'package:minhasnotas/servi%C3%A7os/autentica%C3%A7%C3%A3o/excecao_aut.dart';
+import 'package:minhasnotas/servi%C3%A7os/autentica%C3%A7%C3%A3o/servico_aut.dart';
 import '../utilidades/mostrar_dialogo_erro.dart';
 
 class TelaLogin extends StatefulWidget {
@@ -55,42 +56,35 @@ class _TelaLoginState extends State<TelaLogin> {
               final email = _email.text;
               final senha = _senha.text;
               try {
-                await FirebaseAuth.instance.signInWithEmailAndPassword(
+                ServicoAut.firebase().logIn(
                   email: email,
-                  password: senha,
+                  senha: senha,
                 );
-                final usuario = FirebaseAuth.instance.currentUser;
-                if (usuario?.emailVerified ?? false) {
+                final usuario = ServicoAut.firebase().currentUser;
+                if (usuario?.emailEstaVerificado ?? false) {
                   Navigator.of(context).pushNamedAndRemoveUntil(
                     notasRota,
                     (route) => false,
                   );
                 } else {
-                  Navigator.of(context)
-                      .pushNamedAndRemoveUntil(verificarRotaEmail, (route) => false);
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                      verificarRotaEmail, (route) => false);
                   mostrarErroDialogo(context, 'Usuário não verificado');
                 }
-              } on FirebaseAuthException catch (e) {
-                if (e.code == 'user-not-found') {
-                  await mostrarErroDialogo(
-                    context,
-                    'Usuário não encontrado',
-                  );
-                } else if (e.code == 'wrong-password') {
-                  await mostrarErroDialogo(
-                    context,
-                    'Senha incorreta',
-                  );
-                } else {
-                  await mostrarErroDialogo(
-                    context,
-                    'Erro: ${e.code}',
-                  );
-                }
-              } catch (e) {
+              } on UsuarioNaoEncontradoExcecao {
                 await mostrarErroDialogo(
                   context,
-                  e.toString(),
+                  'Usuário não encontrado',
+                );
+              } on SenhaIncorretaExcecao {
+                await mostrarErroDialogo(
+                  context,
+                  'Senha incorreta',
+                );
+              } on GenericaExcecao {
+                await mostrarErroDialogo(
+                  context,
+                  'Erro de Autenticação',
                 );
               }
             },

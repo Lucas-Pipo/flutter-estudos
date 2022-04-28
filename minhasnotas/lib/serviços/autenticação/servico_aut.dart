@@ -1,9 +1,12 @@
+import 'package:minhasnotas/servi%C3%A7os/autentica%C3%A7%C3%A3o/firebase_aut_provedor.dart';
 import 'package:minhasnotas/serviços/autenticação/provedor_aut.dart';
 import 'package:minhasnotas/serviços/autenticação/usuario_aut.dart';
 
 class ServicoAut implements ProvedorAut {
   final ProvedorAut provedor;
-  ServicoAut(this.provedor);
+  const ServicoAut(this.provedor);
+
+  factory ServicoAut.firebase() => ServicoAut(FirebaseAuthProvider());
 
   @override
   Future<UsuarioAut> criarUsuario({
@@ -33,4 +36,7 @@ class ServicoAut implements ProvedorAut {
 
   @override
   Future<void> sendEmailVerification() => provedor.sendEmailVerification();
+
+  @override
+  Future<void> initialize() => provedor.initialize();
 }
