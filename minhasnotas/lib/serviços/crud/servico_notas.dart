@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
@@ -7,12 +9,35 @@ import 'crud_excecoes.dart';
 class ServicoNotas {
   Database? _db;
 
+  List<DatabaseNota> _notas = [];
+
+  final _notasStreamController =
+      StreamController<List<DatabaseNota>>.broadcast();
+
+  Future<DatabaseUsuario> pegaOuCriaUsuario({required String email}) async {
+    try {
+      final usuario = await pegaUsuario(email: email);
+      return usuario;
+    } on NaoEncontrouUsuario {
+      final criadoUsuario = await criarUsuario(email: email);
+      return criadoUsuario;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> _cacheNotas() async {
+    final todasNotas = await pegaTodasAsNotas();
+    _notas = todasNotas.toList();
+    _notasStreamController.add(_notas);
+  }
+
   Future<DatabaseNota> uptadeNota(
       {required DatabaseNota nota, required String texto}) async {
     final db = _pegaDatabaseOuJoga();
-
+    // ter certeza que a nota existe
     await pegaNota(id: nota.id);
-
+    // update DB
     final updatesContador = await db.update(notasTabela, {
       textoColuna: texto,
       estaSincronizadoComNuvemColuna: 0,
@@ -21,7 +46,11 @@ class ServicoNotas {
     if (updatesContador == 0) {
       throw NaoConseguiuAtualizarNota();
     } else {
-      return await pegaNota(id: nota.id);
+      final updateNota = await pegaNota(id: nota.id);
+      _notas.removeWhere((nota) => nota.id == updateNota.id);
+      _notas.add(updateNota);
+      _notasStreamController.add(_notas);
+      return updateNota;
     }
   }
 
@@ -44,13 +73,20 @@ class ServicoNotas {
     if (notas.isEmpty) {
       throw NaoEncontrouNota();
     } else {
-      return DatabaseNota.deLinha(notas.first);
+      final nota = DatabaseNota.deLinha(notas.first);
+      _notas.removeWhere((nota) => nota.id == id);
+      _notas.add(nota);
+      _notasStreamController.add(_notas);
+      return nota;
     }
   }
 
   Future<int> deletarTodasAsNotas() async {
     final db = _pegaDatabaseOuJoga();
-    return await db.delete(notasTabela);
+    final numeroDeDelecoes = await db.delete(notasTabela);
+    _notas = [];
+    _notasStreamController.add(_notas);
+    return numeroDeDelecoes;
   }
 
   Future<void> deletaNota({required int id}) async {
@@ -62,6 +98,9 @@ class ServicoNotas {
     );
     if (deletadaConta == 0) {
       throw NaoConseguiuDeletarNota();
+    } else {
+      _notas.removeWhere((nota) => nota.id == id);
+      _notasStreamController.add(_notas);
     }
   }
 
@@ -87,6 +126,10 @@ class ServicoNotas {
       texto: texto,
       estaSincadoComNuvem: true,
     );
+
+    _notas.add(nota);
+    _notasStreamController.add(_notas);
+
     return nota;
   }
 
@@ -173,6 +216,7 @@ class ServicoNotas {
       await db.execute(criarTabelaUsuario);
       // criar tabela de nota
       await db.execute(criarTabelaNota);
+      await _cacheNotas();
     } on MissingPlatformDirectoryException {
       throw IncapazDePegarDiretorioDocumentos();
     }
