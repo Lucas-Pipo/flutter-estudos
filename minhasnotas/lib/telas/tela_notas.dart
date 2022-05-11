@@ -18,7 +18,6 @@ class _TelaDeNotasState extends State<TelaDeNotas> {
   @override
   void initState() {
     _servicoNotas = ServicoNotas();
-    _servicoNotas.open();
     super.initState();
   }
 
@@ -64,7 +63,17 @@ class _TelaDeNotasState extends State<TelaDeNotas> {
         builder: (context, snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.done:
-              return const Text('Suas notas aparecerão aqui');
+              return StreamBuilder(
+                stream: _servicoNotas.todasAsNotas,
+                builder: (context, snapshot) {
+                  switch (snapshot.connectionState) {
+                    case ConnectionState.waiting:
+                      return const Text('Esperando por todas as notas...');
+                    default:
+                      return const CircularProgressIndicator();
+                  }
+                },
+              );
             default:
               return const CircularProgressIndicator();
           }

@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
@@ -9,6 +10,10 @@ class ServicoNotas {
   Database? _db;
 
   List<DatabaseNota> _notas = [];
+
+  static final ServicoNotas _shared = ServicoNotas._instanciaDividida();
+  ServicoNotas._instanciaDividida();
+  factory ServicoNotas() => _shared;
 
   final _notasStreamController =
       StreamController<List<DatabaseNota>>.broadcast();

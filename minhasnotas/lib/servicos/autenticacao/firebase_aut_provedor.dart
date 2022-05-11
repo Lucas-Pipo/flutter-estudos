@@ -3,6 +3,7 @@ import 'package:minhasnotas/firebase_options.dart';
 import 'package:minhasnotas/servicos/autenticacao/usuario_aut.dart';
 import 'package:minhasnotas/servicos/autenticacao/excecao_aut.dart';
 import 'package:minhasnotas/servicos/autenticacao/provedor_aut.dart';
+
 import 'package:firebase_auth/firebase_auth.dart'
     show FirebaseAuth, FirebaseAuthException;
 
