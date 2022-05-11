@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:minhasnotas/constantes/rotas.dart';
-import 'package:minhasnotas/servi%C3%A7os/autentica%C3%A7%C3%A3o/servico_aut.dart';
+import 'package:minhasnotas/servicos/autenticacao/servico_aut.dart';
 
 class TelaDeVerificacao extends StatefulWidget {
   const TelaDeVerificacao({Key? key}) : super(key: key);

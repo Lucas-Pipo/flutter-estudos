@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/foundation.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
@@ -14,6 +13,8 @@ class ServicoNotas {
   final _notasStreamController =
       StreamController<List<DatabaseNota>>.broadcast();
 
+  Stream<List<DatabaseNota>> get todasAsNotas => _notasStreamController.stream;
+      
   Future<DatabaseUsuario> pegaOuCriaUsuario({required String email}) async {
     try {
       final usuario = await pegaUsuario(email: email);
@@ -32,8 +33,11 @@ class ServicoNotas {
     _notasStreamController.add(_notas);
   }
 
-  Future<DatabaseNota> uptadeNota(
-      {required DatabaseNota nota, required String texto}) async {
+  Future<DatabaseNota> uptadeNota({
+    required DatabaseNota nota,
+    required String texto,
+  }) async {
+    await _garantirDbAberto();
     final db = _pegaDatabaseOuJoga();
     // ter certeza que a nota existe
     await pegaNota(id: nota.id);
@@ -55,13 +59,15 @@ class ServicoNotas {
   }
 
   Future<Iterable<DatabaseNota>> pegaTodasAsNotas() async {
+    await _garantirDbAberto();
     final db = _pegaDatabaseOuJoga();
     final notas = await db.query(notasTabela);
 
-    return notas.map((notasRota) => DatabaseNota.deLinha(notasRota));
+    return notas.map((notasLinha) => DatabaseNota.deLinha(notasLinha));
   }
 
   Future<DatabaseNota> pegaNota({required int id}) async {
+    await _garantirDbAberto();
     final db = _pegaDatabaseOuJoga();
     final notas = await db.query(
       notasTabela,
@@ -82,6 +88,7 @@ class ServicoNotas {
   }
 
   Future<int> deletarTodasAsNotas() async {
+    await _garantirDbAberto();
     final db = _pegaDatabaseOuJoga();
     final numeroDeDelecoes = await db.delete(notasTabela);
     _notas = [];
@@ -90,6 +97,7 @@ class ServicoNotas {
   }
 
   Future<void> deletaNota({required int id}) async {
+    await _garantirDbAberto();
     final db = _pegaDatabaseOuJoga();
     final deletadaConta = await db.delete(
       notasTabela,
@@ -105,7 +113,9 @@ class ServicoNotas {
   }
 
   Future<DatabaseNota> criarNota({required DatabaseUsuario owner}) async {
+    await _garantirDbAberto();
     final db = _pegaDatabaseOuJoga();
+
     // tenha certeza que o dono existe no database com o id correto
     final dbUsuario = await pegaUsuario(email: owner.email);
     if (dbUsuario != owner) {
@@ -134,6 +144,7 @@ class ServicoNotas {
   }
 
   Future<DatabaseUsuario> pegaUsuario({required String email}) async {
+    await _garantirDbAberto();
     final db = _pegaDatabaseOuJoga();
 
     final resultados = await db.query(
@@ -151,6 +162,7 @@ class ServicoNotas {
   }
 
   Future<DatabaseUsuario> criarUsuario({required String email}) async {
+    await _garantirDbAberto();
     final db = _pegaDatabaseOuJoga();
     final resultados = await db.query(
       usuarioTabela,
@@ -173,6 +185,7 @@ class ServicoNotas {
   }
 
   Future<void> deleteUser({required String email}) async {
+    await _garantirDbAberto();
     final db = _pegaDatabaseOuJoga();
     final deletadaConta = await db.delete(
       usuarioTabela,
@@ -200,6 +213,14 @@ class ServicoNotas {
     } else {
       await db.close();
       _db = null;
+    }
+  }
+
+  Future<void> _garantirDbAberto() async {
+    try {
+      await open();
+    } on DatabaseJaAbertoExcecao {
+      //vazio
     }
   }
 

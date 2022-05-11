@@ -1,8 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:minhasnotas/firebase_options.dart';
-import 'package:minhasnotas/serviços/autenticação/usuario_aut.dart';
-import 'package:minhasnotas/serviços/autenticação/excecao_aut.dart';
-import 'package:minhasnotas/serviços/autenticação/provedor_aut.dart';
+import 'package:minhasnotas/servicos/autenticacao/usuario_aut.dart';
+import 'package:minhasnotas/servicos/autenticacao/excecao_aut.dart';
+import 'package:minhasnotas/servicos/autenticacao/provedor_aut.dart';
 import 'package:firebase_auth/firebase_auth.dart'
     show FirebaseAuth, FirebaseAuthException;
 
@@ -15,14 +15,14 @@ class FirebaseAuthProvider implements ProvedorAut {
   }
 
   @override
-  Future<UsuarioAut> criarUsuario({
+  Future<UsuarioAut> createUser({
     required String email,
-    required String senha,
+    required String password,
   }) async {
     try {
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email,
-        password: senha,
+        password: password,
       );
       final usuario = currentUser;
       if (usuario != null) {
@@ -58,12 +58,12 @@ class FirebaseAuthProvider implements ProvedorAut {
   @override
   Future<UsuarioAut> logIn({
     required String email,
-    required String senha,
+    required String password,
   }) async {
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email,
-        password: senha,
+        password: password,
       );
       final usuario = currentUser;
       if (usuario != null) {
@@ -86,8 +86,8 @@ class FirebaseAuthProvider implements ProvedorAut {
 
   @override
   Future<void> logOut() async {
-    final usuario = FirebaseAuth.instance.currentUser;
-    if (usuario != null) {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
       await FirebaseAuth.instance.signOut();
     } else {
       throw UsuarioNaoLogadoExcecao();
@@ -96,9 +96,9 @@ class FirebaseAuthProvider implements ProvedorAut {
 
   @override
   Future<void> sendEmailVerification() async {
-    final usuario = FirebaseAuth.instance.currentUser;
-    if (usuario != null) {
-      await usuario.sendEmailVerification();
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      await user.sendEmailVerification();
     } else {
       throw UsuarioNaoLogadoExcecao();
     }

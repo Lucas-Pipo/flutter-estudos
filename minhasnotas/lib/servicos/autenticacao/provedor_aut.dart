@@ -1,15 +1,15 @@
-import 'package:minhasnotas/serviços/autenticação/usuario_aut.dart';
+import 'package:minhasnotas/servicos/autenticacao/usuario_aut.dart';
 
 abstract class ProvedorAut {
   Future<void> initialize();
   UsuarioAut? get currentUser;
   Future<UsuarioAut> logIn({
     required String email,
-    required String senha,
+    required String password,
   });
-  Future<UsuarioAut> criarUsuario({
+  Future<UsuarioAut> createUser({
     required String email,
-    required String senha,
+    required String password,
   });
   Future<void> logOut();
   Future<void> sendEmailVerification();

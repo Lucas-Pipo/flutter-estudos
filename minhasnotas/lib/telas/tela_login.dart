@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:minhasnotas/constantes/rotas.dart';
-import 'package:minhasnotas/servi%C3%A7os/autentica%C3%A7%C3%A3o/excecao_aut.dart';
-import 'package:minhasnotas/servi%C3%A7os/autentica%C3%A7%C3%A3o/servico_aut.dart';
+import 'package:minhasnotas/servicos/autenticacao/excecao_aut.dart';
+import 'package:minhasnotas/servicos/autenticacao/servico_aut.dart';
 import '../utilidades/mostrar_dialogo_erro.dart';
 
 class TelaLogin extends StatefulWidget {
@@ -13,19 +13,19 @@ class TelaLogin extends StatefulWidget {
 
 class _TelaLoginState extends State<TelaLogin> {
   late final TextEditingController _email;
-  late final TextEditingController _senha;
+  late final TextEditingController _password;
 
   @override
   void initState() {
     _email = TextEditingController();
-    _senha = TextEditingController();
+    _password = TextEditingController();
     super.initState();
   }
 
   @override
   void dispose() {
     _email.dispose();
-    _senha.dispose();
+    _password.dispose();
     super.dispose();
   }
 
@@ -44,7 +44,7 @@ class _TelaLoginState extends State<TelaLogin> {
                 const InputDecoration(hintText: 'Escreva seu e-mail aqui!'),
           ),
           TextField(
-            controller: _senha,
+            controller: _password,
             obscureText: true,
             enableSuggestions: false,
             autocorrect: false,
@@ -54,11 +54,11 @@ class _TelaLoginState extends State<TelaLogin> {
           TextButton(
             onPressed: () async {
               final email = _email.text;
-              final senha = _senha.text;
+              final password = _password.text;
               try {
                 ServicoAut.firebase().logIn(
                   email: email,
-                  senha: senha,
+                  password: password,
                 );
                 final usuario = ServicoAut.firebase().currentUser;
                 if (usuario?.emailEstaVerificado ?? false) {
@@ -69,7 +69,6 @@ class _TelaLoginState extends State<TelaLogin> {
                 } else {
                   Navigator.of(context).pushNamedAndRemoveUntil(
                       verificarRotaEmail, (route) => false);
-                  mostrarErroDialogo(context, 'Usuário não verificado');
                 }
               } on UsuarioNaoEncontradoExcecao {
                 await mostrarErroDialogo(

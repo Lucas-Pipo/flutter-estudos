@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:minhasnotas/constantes/rotas.dart';
 import 'package:minhasnotas/enums/menu_acao.dart';
-import 'package:minhasnotas/servi%C3%A7os/autentica%C3%A7%C3%A3o/servico_aut.dart';
+import 'package:minhasnotas/servicos/autenticacao/servico_aut.dart';
+import 'package:minhasnotas/servicos/crud/servico_notas.dart';
 
 class TelaDeNotas extends StatefulWidget {
   const TelaDeNotas({Key? key}) : super(key: key);
@@ -11,11 +12,27 @@ class TelaDeNotas extends StatefulWidget {
 }
 
 class _TelaDeNotasState extends State<TelaDeNotas> {
+  late final ServicoNotas _servicoNotas;
+  String get usuarioEmail => ServicoAut.firebase().currentUser!.email!;
+
+  @override
+  void initState() {
+    _servicoNotas = ServicoNotas();
+    _servicoNotas.open();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _servicoNotas.close();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('UI Principal'),
+        title: const Text('Notas'),
         actions: [
           PopupMenuButton<MenuAcao>(
             onSelected: (value) async {
@@ -42,7 +59,17 @@ class _TelaDeNotasState extends State<TelaDeNotas> {
           )
         ],
       ),
-      body: const Text('Ola Mundo!'),
+      body: FutureBuilder(
+        future: _servicoNotas.pegaOuCriaUsuario(email: usuarioEmail),
+        builder: (context, snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.done:
+              return const Text('Suas notas aparecerão aqui');
+            default:
+              return const CircularProgressIndicator();
+          }
+        },
+      ),
     );
   }
 }

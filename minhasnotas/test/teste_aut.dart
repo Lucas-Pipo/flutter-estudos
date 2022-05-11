@@ -1,138 +1,144 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:minhasnotas/servi%C3%A7os/autentica%C3%A7%C3%A3o/excecao_aut.dart';
-import 'package:minhasnotas/servi%C3%A7os/autentica%C3%A7%C3%A3o/provedor_aut.dart';
-import 'package:minhasnotas/servi%C3%A7os/autentica%C3%A7%C3%A3o/usuario_aut.dart';
+import 'package:minhasnotas/servicos/autenticacao/excecao_aut.dart';
+import 'package:minhasnotas/servicos/autenticacao/provedor_aut.dart';
+import 'package:minhasnotas/servicos/autenticacao/usuario_aut.dart';
 
 void main() {
   group('Autenticação Mock', () {
-    final provedor = MockProvedorAut();
-    test('Não deve ser inicializado para iniciar', () {
-      expect(provedor.estaInicializado, false);
+    final provider = MockAuthProvider();
+    test('Não deveria inicializar de começo', () {
+      expect(provider.isInitialized, false);
     });
 
-    test('Não pode deslogar se não inicializado', () {
+    test('Não consegue deslogar se não for inicializado', () {
       expect(
-        provedor.logOut(),
-        throwsA(const TypeMatcher<NaoInicializadoExcecao>()),
+        provider.logOut(),
+        throwsA(const TypeMatcher<NotInitializedException>()),
       );
     });
 
-    test('Deveria ser capaz de inicializar', () async {
-      await provedor.initialize();
-      expect(provedor.estaInicializado, true);
+    test('Deve ser capaz de inicializar', () async {
+      await provider.initialize();
+      expect(provider.isInitialized, true);
     });
 
-    test('Usuário deve estar nulo depois da inicialização', () {
-      expect(provedor.currentUser, null);
+    test('Usuário deve ser nulo depois da inicialização', () {
+      expect(provider.currentUser, null);
     });
 
     test(
       'Deve ser capaz de inicializar em menos de 2 segundos',
       () async {
-        await provedor.initialize();
-        expect(provedor.estaInicializado, true);
+        await provider.initialize();
+        expect(provider.isInitialized, true);
       },
       timeout: const Timeout(Duration(seconds: 2)),
     );
-
-    test('Criar usuário deveria delegar a função logIn', () async {
-      final emailRuimUsuario = provedor.criarUsuario(
-        email: 'lucasvieira91@qualquercoisa.com',
-        senha: 'teste321',
+    test('Criar usuário deve delegar função', () async {
+      final badEmailUser = provider.createUser(
+        email: 'foo@bar.com',
+        password: 'anypassword',
       );
 
-      expect(emailRuimUsuario,
+      expect(badEmailUser,
           throwsA(const TypeMatcher<UsuarioNaoEncontradoExcecao>()));
 
-      final usuarioRuimSenha = provedor.criarUsuario(
-        email: 'foo@bar.com',
-        senha: 'foobar',
+      final badPasswordUser = provider.createUser(
+        email: 'someone@bar.com',
+        password: 'foobar',
       );
-      expect(usuarioRuimSenha,
-          throwsA(const TypeMatcher<SenhaIncorretaExcecao>()));
+      expect(
+          badPasswordUser, throwsA(const TypeMatcher<SenhaIncorretaExcecao>()));
 
-      final usuario = await provedor.criarUsuario(
-        email: 'banana',
-        senha: 'batata',
+      final user = await provider.createUser(
+        email: 'foo',
+        password: 'bar',
       );
-      expect(provedor.currentUser, usuario);
-      expect(usuario.emailEstaVerificado, false);
+      expect(provider.currentUser, user);
+      expect(user.emailEstaVerificado, false);
     });
+
     test('Usuário logado deve ser capaz de ser verificado', () {
-      provedor.sendEmailVerification();
-      final usuario = provedor.currentUser;
-      expect(usuario, isNotNull);
-      expect(usuario!.emailEstaVerificado, true);
+      provider.sendEmailVerification();
+      final user = provider.currentUser;
+      expect(user, isNotNull);
+      expect(user!.emailEstaVerificado, true);
     });
 
-    test('Deve ser capaz de logar e deslogar de novo', () async {
-      await provedor.logOut();
-      await provedor.logIn(
+    test('Deve ser capaz de logar e deslogar', () async {
+      await provider.logOut();
+      await provider.logIn(
         email: 'email',
-        senha: 'senha',
+        password: 'password',
       );
-      final usuario = provedor.currentUser;
-      expect(usuario, isNotNull);
+      final user = provider.currentUser;
+      expect(user, isNotNull);
     });
   });
 }
 
-class NaoInicializadoExcecao implements Exception {}
+class NotInitializedException implements Exception {}
 
-class MockProvedorAut implements ProvedorAut {
-  UsuarioAut? _usuario;
-  var _estaInicializado = false;
-  bool get estaInicializado => _estaInicializado;
+class MockAuthProvider implements ProvedorAut {
+  UsuarioAut? _user;
+  var _isInitialized = false;
+  bool get isInitialized => _isInitialized;
 
   @override
-  Future<UsuarioAut> criarUsuario({
+  Future<UsuarioAut> createUser({
     required String email,
-    required String senha,
+    required String password,
   }) async {
-    if (!estaInicializado) throw NaoInicializadoExcecao();
+    if (!isInitialized) throw NotInitializedException();
     await Future.delayed(const Duration(seconds: 1));
     return logIn(
       email: email,
-      senha: senha,
+      password: password,
     );
   }
 
   @override
-  UsuarioAut? get currentUser => _usuario;
+  UsuarioAut? get currentUser => _user;
 
   @override
   Future<void> initialize() async {
     await Future.delayed(const Duration(seconds: 1));
-    _estaInicializado = true;
+    _isInitialized = true;
   }
 
   @override
   Future<UsuarioAut> logIn({
     required String email,
-    required String senha,
+    required String password,
   }) {
-    if (!estaInicializado) throw NaoInicializadoExcecao();
+    if (!isInitialized) throw NotInitializedException();
     if (email == 'foo@bar.com') throw UsuarioNaoEncontradoExcecao();
-    if (senha == 'foobar') throw SenhaIncorretaExcecao();
-    const usuario = UsuarioAut(emailEstaVerificado: false);
-    _usuario = usuario;
-    return Future.value(usuario);
+    if (password == 'foobar') throw SenhaIncorretaExcecao();
+    const user = UsuarioAut(
+      emailEstaVerificado: false,
+      email: 'foo@bar.com',
+    );
+    _user = user;
+    return Future.value(user);
   }
 
   @override
   Future<void> logOut() async {
-    if (!estaInicializado) throw NaoInicializadoExcecao();
-    if (_usuario == null) throw UsuarioNaoEncontradoExcecao();
+    if (!isInitialized) throw NotInitializedException();
+    if (_user == null) throw UsuarioNaoEncontradoExcecao();
     await Future.delayed(const Duration(seconds: 1));
-    _usuario = null;
+    _user = null;
   }
 
   @override
   Future<void> sendEmailVerification() async {
-    if (!estaInicializado) throw NaoInicializadoExcecao();
-    final usuario = _usuario;
-    if (usuario == null) throw UsuarioNaoEncontradoExcecao();
-    const novoUsuario = UsuarioAut(emailEstaVerificado: true);
-    _usuario = novoUsuario;
+    if (!isInitialized) throw NotInitializedException();
+    final user = _user;
+    if (user == null) throw UsuarioNaoEncontradoExcecao();
+    const newUser = UsuarioAut(
+      emailEstaVerificado: true,
+      email: 'foo@bar.com',
+    );
+    _user = newUser;
   }
 }
