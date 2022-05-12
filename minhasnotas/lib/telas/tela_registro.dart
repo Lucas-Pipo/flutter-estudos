@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:minhasnotas/constantes/rotas.dart';
 import 'package:minhasnotas/servicos/autenticacao/excecao_aut.dart';
 import 'package:minhasnotas/servicos/autenticacao/servico_aut.dart';
-import 'package:minhasnotas/utilidades/mostrar_dialogo_erro.dart';
+
+import '../utilidades/dialogos/dialogo_erro.dart';
 
 class TelaRegistro extends StatefulWidget {
   const TelaRegistro({Key? key}) : super(key: key);

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:minhasnotas/constantes/rotas.dart';
 import 'package:minhasnotas/servicos/autenticacao/excecao_aut.dart';
 import 'package:minhasnotas/servicos/autenticacao/servico_aut.dart';
-import '../utilidades/mostrar_dialogo_erro.dart';
+import '../utilidades/dialogos/dialogo_erro.dart';
 
 class TelaLogin extends StatefulWidget {
   const TelaLogin({Key? key}) : super(key: key);

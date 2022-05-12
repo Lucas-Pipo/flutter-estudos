@@ -3,6 +3,9 @@ import 'package:minhasnotas/constantes/rotas.dart';
 import 'package:minhasnotas/enums/menu_acao.dart';
 import 'package:minhasnotas/servicos/autenticacao/servico_aut.dart';
 import 'package:minhasnotas/servicos/crud/servico_notas.dart';
+import 'package:minhasnotas/telas/notas/notas_lista_tela.dart';
+
+import '../../utilidades/dialogos/dialogo_logout.dart';
 
 class TelaDeNotas extends StatefulWidget {
   const TelaDeNotas({Key? key}) : super(key: key);
@@ -71,18 +74,10 @@ class _TelaDeNotasState extends State<TelaDeNotas> {
                     case ConnectionState.active:
                       if (snapshot.hasData) {
                         final todasNotas = snapshot.data as List<DatabaseNota>;
-                        return ListView.builder(
-                          itemCount: todasNotas.length,
-                          itemBuilder: (context, index) {
-                            final nota = todasNotas[index];
-                            return ListTile(
-                              title: Text(
-                                nota.texto,
-                                maxLines: 1,
-                                softWrap: true,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            );
+                        return NotasListaTela(
+                          notas: todasNotas,
+                          onDeletaNota: (nota) async {
+                            await _servicoNotas.deletaNota(id: nota.id);
                           },
                         );
                       } else {
@@ -100,30 +95,4 @@ class _TelaDeNotasState extends State<TelaDeNotas> {
       ),
     );
   }
-}
-
-Future<bool> dialogoLogOut(BuildContext context) {
-  return showDialog<bool>(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        title: const Text('Desconectar'),
-        content: const Text('Tem certeza que você quer se desconectar?'),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(false);
-            },
-            child: const Text('Cancelar'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(true);
-            },
-            child: const Text('Desconectar'),
-          ),
-        ],
-      );
-    },
-  ).then((value) => value ?? false);
 }
