@@ -304,7 +304,7 @@ class DatabaseNota {
 }
 
 const dbNome = 'notas.db';
-const notasTabela = 'notas';
+const notasTabela = 'nota';
 const usuarioTabela = 'usuario';
 const idColuna = 'id';
 const emailColuna = 'email';
