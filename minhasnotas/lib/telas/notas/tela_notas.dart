@@ -31,8 +31,14 @@ class _TelaDeNotasState extends State<TelaDeNotas> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Notas'),
+        title: const Text('Suas Notas'),
         actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.of(context).pushNamed(novaRotaNotas);
+            },
+            icon: const Icon(Icons.add),
+          ),
           PopupMenuButton<MenuAcao>(
             onSelected: (value) async {
               switch (value) {
