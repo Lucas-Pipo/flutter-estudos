@@ -19,7 +19,7 @@ class ServicoNotas {
       StreamController<List<DatabaseNota>>.broadcast();
 
   Stream<List<DatabaseNota>> get todasAsNotas => _notasStreamController.stream;
-      
+
   Future<DatabaseUsuario> pegaOuCriaUsuario({required String email}) async {
     try {
       final usuario = await pegaUsuario(email: email);
@@ -38,7 +38,7 @@ class ServicoNotas {
     _notasStreamController.add(_notas);
   }
 
-  Future<DatabaseNota> uptadeNota({
+  Future<DatabaseNota> updateNota({
     required DatabaseNota nota,
     required String texto,
   }) async {

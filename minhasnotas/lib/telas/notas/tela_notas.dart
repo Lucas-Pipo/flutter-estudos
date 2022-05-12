@@ -74,6 +74,7 @@ class _TelaDeNotasState extends State<TelaDeNotas> {
                 builder: (context, snapshot) {
                   switch (snapshot.connectionState) {
                     case ConnectionState.waiting:
+                    case ConnectionState.active:
                       return const Text('Esperando por todas as notas...');
                     default:
                       return const CircularProgressIndicator();
