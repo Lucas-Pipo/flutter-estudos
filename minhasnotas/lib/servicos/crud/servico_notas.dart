@@ -12,11 +12,16 @@ class ServicoNotas {
   List<DatabaseNota> _notas = [];
 
   static final ServicoNotas _shared = ServicoNotas._instanciaDividida();
-  ServicoNotas._instanciaDividida();
+  ServicoNotas._instanciaDividida() {
+    _notasStreamController = StreamController<List<DatabaseNota>>.broadcast(
+      onListen: () {
+        _notasStreamController.sink.add(_notas);
+      },
+    );
+  }
   factory ServicoNotas() => _shared;
 
-  final _notasStreamController =
-      StreamController<List<DatabaseNota>>.broadcast();
+  late final StreamController<List<DatabaseNota>> _notasStreamController;
 
   Stream<List<DatabaseNota>> get todasAsNotas => _notasStreamController.stream;
 

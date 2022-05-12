@@ -22,12 +22,6 @@ class _TelaDeNotasState extends State<TelaDeNotas> {
   }
 
   @override
-  void dispose() {
-    _servicoNotas.close();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -75,7 +69,25 @@ class _TelaDeNotasState extends State<TelaDeNotas> {
                   switch (snapshot.connectionState) {
                     case ConnectionState.waiting:
                     case ConnectionState.active:
-                      return const Text('Esperando por todas as notas...');
+                      if (snapshot.hasData) {
+                        final todasNotas = snapshot.data as List<DatabaseNota>;
+                        return ListView.builder(
+                          itemCount: todasNotas.length,
+                          itemBuilder: (context, index) {
+                            final nota = todasNotas[index];
+                            return ListTile(
+                              title: Text(
+                                nota.texto,
+                                maxLines: 1,
+                                softWrap: true,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            );
+                          },
+                        );
+                      } else {
+                        return const CircularProgressIndicator();
+                      }
                     default:
                       return const CircularProgressIndicator();
                   }
