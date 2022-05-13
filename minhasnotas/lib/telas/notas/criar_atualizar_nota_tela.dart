@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:minhasnotas/servicos/autenticacao/servico_aut.dart';
 import 'package:minhasnotas/servicos/crud/servico_notas.dart';
+import 'package:minhasnotas/utilidades/dialogos/genericos/pega_argumentos.dart';
 
-class NovaNotaTela extends StatefulWidget {
-  const NovaNotaTela({Key? key}) : super(key: key);
+class CriarAtualizarNotaTela extends StatefulWidget {
+  const CriarAtualizarNotaTela({Key? key}) : super(key: key);
 
   @override
-  State<NovaNotaTela> createState() => _NovaNotaTelaState();
+  State<CriarAtualizarNotaTela> createState() => _CriarAtualizarNotaTelaState();
 }
 
-class _NovaNotaTelaState extends State<NovaNotaTela> {
+class _CriarAtualizarNotaTelaState extends State<CriarAtualizarNotaTela> {
   DatabaseNota? _nota;
   late final ServicoNotas _servicoNotas;
   late final TextEditingController _textController;
@@ -39,7 +39,15 @@ class _NovaNotaTelaState extends State<NovaNotaTela> {
     _textController.addListener(_textControllerListener);
   }
 
-  Future<DatabaseNota> criarNovaNota() async {
+  Future<DatabaseNota> criarOuPegarNotaExistente(BuildContext context) async {
+    final notaWidget = context.pegaArgumento<DatabaseNota>();
+
+    if (notaWidget != null) {
+      _nota = notaWidget;
+      _textController.text = notaWidget.texto;
+      return notaWidget;
+    }
+
     final notaExistente = _nota;
     if (notaExistente != null) {
       return notaExistente;
@@ -47,7 +55,9 @@ class _NovaNotaTelaState extends State<NovaNotaTela> {
     final currentUser = ServicoAut.firebase().currentUser!;
     final email = currentUser.email!;
     final owner = await _servicoNotas.pegaUsuario(email: email);
-    return await _servicoNotas.criarNota(owner: owner);
+    final novaNota = await _servicoNotas.criarNota(owner: owner);
+    _nota = novaNota;
+    return novaNota;
   }
 
   void _deletaNotaSeTextoVazio() {
@@ -83,11 +93,10 @@ class _NovaNotaTelaState extends State<NovaNotaTela> {
           title: const Text('Nova Nota'),
         ),
         body: FutureBuilder(
-          future: criarNovaNota(),
+          future: criarOuPegarNotaExistente(context),
           builder: (context, snapshot) {
             switch (snapshot.connectionState) {
               case ConnectionState.done:
-                _nota = snapshot.data as DatabaseNota;
                 _setupTextControllerListener();
                 return TextField(
                   controller: _textController,

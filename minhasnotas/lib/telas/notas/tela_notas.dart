@@ -32,7 +32,7 @@ class _TelaDeNotasState extends State<TelaDeNotas> {
         actions: [
           IconButton(
             onPressed: () {
-              Navigator.of(context).pushNamed(novaRotaNotas);
+              Navigator.of(context).pushNamed(criarOuAtualizarNotaRota);
             },
             icon: const Icon(Icons.add),
           ),
@@ -76,8 +76,14 @@ class _TelaDeNotasState extends State<TelaDeNotas> {
                         final todasNotas = snapshot.data as List<DatabaseNota>;
                         return NotasListaTela(
                           notas: todasNotas,
-                          onDeletaNota: (nota) async {
+                          aoDeletaNota: (nota) async {
                             await _servicoNotas.deletaNota(id: nota.id);
+                          },
+                          aoClicar: (nota) {
+                            Navigator.of(context).pushNamed(
+                              criarOuAtualizarNotaRota,
+                              arguments: nota,
+                            );
                           },
                         );
                       } else {

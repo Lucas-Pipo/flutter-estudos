@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:minhasnotas/constantes/rotas.dart';
 import 'package:minhasnotas/servicos/autenticacao/servico_aut.dart';
-import 'package:minhasnotas/telas/notas/nova_tela_notas.dart';
+import 'package:minhasnotas/telas/notas/criar_atualizar_nota_tela.dart';
 import 'package:minhasnotas/telas/tela_login.dart';
 import 'package:minhasnotas/telas/notas/tela_notas.dart';
 import 'package:minhasnotas/telas/tela_registro.dart';
@@ -20,8 +20,8 @@ void main() {
         loginRota: (context) => const TelaLogin(),
         registroRota: (context) => const TelaRegistro(),
         notasRota: (context) => const TelaDeNotas(),
-        verificarRotaEmail : (context) => const TelaDeVerificacao(),
-        novaRotaNotas : (context) => const NovaNotaTela(),
+        verificarRotaEmail: (context) => const TelaDeVerificacao(),
+        criarOuAtualizarNotaRota: (context) => const CriarAtualizarNotaTela(),
       },
     ),
   );
