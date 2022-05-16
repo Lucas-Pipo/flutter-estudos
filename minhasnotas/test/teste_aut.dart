@@ -115,6 +115,7 @@ class MockAuthProvider implements ProvedorAut {
     if (email == 'foo@bar.com') throw UsuarioNaoEncontradoExcecao();
     if (password == 'foobar') throw SenhaIncorretaExcecao();
     const user = UsuarioAut(
+      id: 'my_id',
       emailEstaVerificado: false,
       email: 'foo@bar.com',
     );
@@ -136,6 +137,7 @@ class MockAuthProvider implements ProvedorAut {
     final user = _user;
     if (user == null) throw UsuarioNaoEncontradoExcecao();
     const newUser = UsuarioAut(
+      id: 'my_id',
       emailEstaVerificado: true,
       email: 'foo@bar.com',
     );

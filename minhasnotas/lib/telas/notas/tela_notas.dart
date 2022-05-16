@@ -16,7 +16,7 @@ class TelaDeNotas extends StatefulWidget {
 
 class _TelaDeNotasState extends State<TelaDeNotas> {
   late final ServicoNotas _servicoNotas;
-  String get usuarioEmail => ServicoAut.firebase().currentUser!.email!;
+  String get usuarioEmail => ServicoAut.firebase().currentUser!.email;
 
   @override
   void initState() {

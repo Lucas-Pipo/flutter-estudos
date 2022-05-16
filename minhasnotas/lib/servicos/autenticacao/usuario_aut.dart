@@ -3,15 +3,18 @@ import 'package:flutter/foundation.dart';
 
 @immutable
 class UsuarioAut {
-  final String? email;
+  final String id;
+  final String email;
   final bool emailEstaVerificado;
   const UsuarioAut({
+    required this.id,
     required this.email,
     required this.emailEstaVerificado,
   });
 
   factory UsuarioAut.fromFirebase(User user) => UsuarioAut(
-        email: user.email,
+        id: user.uid,
+        email: user.email!,
         emailEstaVerificado: user.emailVerified,
       );
 }

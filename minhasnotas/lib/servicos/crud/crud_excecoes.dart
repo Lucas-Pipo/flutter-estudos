@@ -15,3 +15,5 @@ class NaoConseguiuDeletarNota implements Exception {}
 class NaoEncontrouNota implements Exception {}
 
 class NaoConseguiuAtualizarNota implements Exception {}
+
+class UsuarioDeveriaSerDefinidoAntesDeLerTodasAsNotas implements Exception {}

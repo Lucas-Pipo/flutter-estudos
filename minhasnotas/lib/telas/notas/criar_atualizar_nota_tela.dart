@@ -53,7 +53,7 @@ class _CriarAtualizarNotaTelaState extends State<CriarAtualizarNotaTela> {
       return notaExistente;
     }
     final currentUser = ServicoAut.firebase().currentUser!;
-    final email = currentUser.email!;
+    final email = currentUser.email;
     final owner = await _servicoNotas.pegaUsuario(email: email);
     final novaNota = await _servicoNotas.criarNota(owner: owner);
     _nota = novaNota;

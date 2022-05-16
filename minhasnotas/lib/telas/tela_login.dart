@@ -68,7 +68,9 @@ class _TelaLoginState extends State<TelaLogin> {
                   );
                 } else {
                   Navigator.of(context).pushNamedAndRemoveUntil(
-                      verificarRotaEmail, (route) => false);
+                    verificarRotaEmail,
+                    (route) => false,
+                  );
                 }
               } on UsuarioNaoEncontradoExcecao {
                 await mostrarErroDialogo(

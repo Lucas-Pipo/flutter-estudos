@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'package:minhasnotas/extensoes/lista/filtro.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' show join;
@@ -10,6 +11,8 @@ class ServicoNotas {
   Database? _db;
 
   List<DatabaseNota> _notas = [];
+
+  DatabaseUsuario? _usuario;
 
   static final ServicoNotas _shared = ServicoNotas._instanciaDividida();
   ServicoNotas._instanciaDividida() {
@@ -23,14 +26,31 @@ class ServicoNotas {
 
   late final StreamController<List<DatabaseNota>> _notasStreamController;
 
-  Stream<List<DatabaseNota>> get todasAsNotas => _notasStreamController.stream;
+  Stream<List<DatabaseNota>> get todasAsNotas =>
+      _notasStreamController.stream.filter((nota) {
+        final currentUser = _usuario;
+        if (currentUser != null) {
+          return nota.usuarioId == currentUser.id;
+        } else {
+          throw UsuarioDeveriaSerDefinidoAntesDeLerTodasAsNotas();
+        }
+      });
 
-  Future<DatabaseUsuario> pegaOuCriaUsuario({required String email}) async {
+  Future<DatabaseUsuario> pegaOuCriaUsuario({
+    required String email,
+    bool defineComoUsuarioAtual = true,
+  }) async {
     try {
       final usuario = await pegaUsuario(email: email);
+      if (defineComoUsuarioAtual) {
+        _usuario = usuario;
+      }
       return usuario;
     } on NaoEncontrouUsuario {
       final criadoUsuario = await criarUsuario(email: email);
+      if (defineComoUsuarioAtual) {
+        _usuario = criadoUsuario;
+      }
       return criadoUsuario;
     } catch (e) {
       rethrow;
@@ -52,10 +72,15 @@ class ServicoNotas {
     // ter certeza que a nota existe
     await pegaNota(id: nota.id);
     // update DB
-    final updatesContador = await db.update(notasTabela, {
-      textoColuna: texto,
-      estaSincronizadoComNuvemColuna: 0,
-    });
+    final updatesContador = await db.update(
+      notasTabela,
+      {
+        textoColuna: texto,
+        estaSincronizadoComNuvemColuna: 0,
+      },
+      where: 'id = ?',
+      whereArgs: [nota.id],
+    );
 
     if (updatesContador == 0) {
       throw NaoConseguiuAtualizarNota();
