@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import '../../servicos/crud/servico_notas.dart';
+import 'package:minhasnotas/servicos/nuvem/nota_nuvem.dart';
 import '../../utilidades/dialogos/dialogo_deletar.dart';
 
-typedef NotaCallback = void Function(DatabaseNota nota);
+typedef NotaCallback = void Function(NotaNuvem nota);
 
 class NotasListaTela extends StatelessWidget {
-  final List<DatabaseNota> notas;
+  final List<NotaNuvem> notas;
   final NotaCallback aoDeletaNota;
   final NotaCallback aoClicar;
 
@@ -21,7 +21,7 @@ class NotasListaTela extends StatelessWidget {
     return ListView.builder(
       itemCount: notas.length,
       itemBuilder: (context, index) {
-        final nota = notas[index];
+        final nota = notas.elementAt(index);
         return ListTile(
           onTap: () {
             aoClicar(nota);

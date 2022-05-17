@@ -39,26 +39,24 @@ class FirebaseArmazenamentoNuvem {
           )
           .get()
           .then(
-            (value) => value.docs.map(
-              (doc) {
-                return NotaNuvem(
-                  documentoId: doc.id,
-                  donoUsuarioId: doc.data()[donoUsuarioIdCampoNome] as String,
-                  texto: doc.data()[campoTextoNome] as String,
-                );
-              },
-            ),
+            (value) => value.docs.map((doc) => NotaNuvem.fromSnapshot(doc)),
           );
     } catch (e) {
       throw NaoConseguiuPegarTodasAsNotasExcecao();
     }
   }
 
-  void criarNovaNota({required String donoUsuarioId}) async {
-    notas.add({
+  Future<NotaNuvem> criarNovaNota({required String donoUsuarioId}) async {
+    final documento = await notas.add({
       donoUsuarioIdCampoNome: donoUsuarioId,
       campoTextoNome: '',
     });
+    final notaFechada = await documento.get();
+    return NotaNuvem(
+      documentoId: notaFechada.id,
+      donoUsuarioId: donoUsuarioId,
+      texto: '',
+    );
   }
 
   static final FirebaseArmazenamentoNuvem _shared =

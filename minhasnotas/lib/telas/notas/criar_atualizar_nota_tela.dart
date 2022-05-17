@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:minhasnotas/servicos/autenticacao/servico_aut.dart';
-import 'package:minhasnotas/servicos/crud/servico_notas.dart';
 import 'package:minhasnotas/utilidades/dialogos/genericos/pega_argumentos.dart';
+import 'package:minhasnotas/servicos/nuvem/firebase_armazenamento_nuvem.dart';
+import 'package:minhasnotas/servicos/nuvem/nota_nuvem.dart';
+import 'package:minhasnotas/servicos/nuvem/excecoes_nuvem_armazenamento.dart';
 
 class CriarAtualizarNotaTela extends StatefulWidget {
   const CriarAtualizarNotaTela({Key? key}) : super(key: key);
@@ -11,13 +13,13 @@ class CriarAtualizarNotaTela extends StatefulWidget {
 }
 
 class _CriarAtualizarNotaTelaState extends State<CriarAtualizarNotaTela> {
-  DatabaseNota? _nota;
-  late final ServicoNotas _servicoNotas;
+  NotaNuvem? _nota;
+  late final FirebaseArmazenamentoNuvem _servicoNotas;
   late final TextEditingController _textController;
 
   @override
   void initState() {
-    _servicoNotas = ServicoNotas();
+    _servicoNotas = FirebaseArmazenamentoNuvem();
     _textController = TextEditingController();
     super.initState();
   }
@@ -28,8 +30,8 @@ class _CriarAtualizarNotaTelaState extends State<CriarAtualizarNotaTela> {
       return;
     }
     final text = _textController.text;
-    await _servicoNotas.updateNota(
-      nota: nota,
+    await _servicoNotas.atualizarNota(
+      documentoId: nota.documentoId,
       texto: text,
     );
   }
@@ -39,8 +41,8 @@ class _CriarAtualizarNotaTelaState extends State<CriarAtualizarNotaTela> {
     _textController.addListener(_textControllerListener);
   }
 
-  Future<DatabaseNota> criarOuPegarNotaExistente(BuildContext context) async {
-    final notaWidget = context.pegaArgumento<DatabaseNota>();
+  Future<NotaNuvem> criarOuPegarNotaExistente(BuildContext context) async {
+    final notaWidget = context.pegaArgumento<NotaNuvem>();
 
     if (notaWidget != null) {
       _nota = notaWidget;
@@ -53,9 +55,9 @@ class _CriarAtualizarNotaTelaState extends State<CriarAtualizarNotaTela> {
       return notaExistente;
     }
     final currentUser = ServicoAut.firebase().currentUser!;
-    final email = currentUser.email;
-    final owner = await _servicoNotas.pegaUsuario(email: email);
-    final novaNota = await _servicoNotas.criarNota(owner: owner);
+    final usuarioId = currentUser.id;
+    final novaNota =
+        await _servicoNotas.criarNovaNota(donoUsuarioId: usuarioId);
     _nota = novaNota;
     return novaNota;
   }
@@ -63,7 +65,7 @@ class _CriarAtualizarNotaTelaState extends State<CriarAtualizarNotaTela> {
   void _deletaNotaSeTextoVazio() {
     final nota = _nota;
     if (_textController.text.isEmpty && nota != null) {
-      _servicoNotas.deletaNota(id: nota.id);
+      _servicoNotas.deletaNota(documentoId: nota.documentoId);
     }
   }
 
@@ -71,8 +73,8 @@ class _CriarAtualizarNotaTelaState extends State<CriarAtualizarNotaTela> {
     final nota = _nota;
     final text = _textController.text;
     if (nota != null && text.isNotEmpty) {
-      await _servicoNotas.updateNota(
-        nota: nota,
+      await _servicoNotas.atualizarNota(
+        documentoId: nota.documentoId,
         texto: text,
       );
     }
