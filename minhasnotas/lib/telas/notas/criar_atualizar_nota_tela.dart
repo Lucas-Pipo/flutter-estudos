@@ -4,6 +4,9 @@ import 'package:minhasnotas/utilidades/dialogos/genericos/pega_argumentos.dart';
 import 'package:minhasnotas/servicos/nuvem/firebase_armazenamento_nuvem.dart';
 import 'package:minhasnotas/servicos/nuvem/nota_nuvem.dart';
 import 'package:minhasnotas/servicos/nuvem/excecoes_nuvem_armazenamento.dart';
+import 'package:share_plus/share_plus.dart';
+
+import '../../utilidades/dialogos/nao_compartilhar_nota_vazia.dart';
 
 class CriarAtualizarNotaTela extends StatefulWidget {
   const CriarAtualizarNotaTela({Key? key}) : super(key: key);
@@ -93,6 +96,19 @@ class _CriarAtualizarNotaTelaState extends State<CriarAtualizarNotaTela> {
     return Scaffold(
         appBar: AppBar(
           title: const Text('Nova Nota'),
+          actions: [
+            IconButton(
+              onPressed: () async{
+                final texto = _textController.text;
+                if (_nota == null || texto.isEmpty){
+                  await mostrarNaoPodeCompartilharNotaVazia(context);
+                } else {
+                  Share.share(texto);
+                }
+              },
+              icon: const Icon(Icons.share),
+            ),
+          ],
         ),
         body: FutureBuilder(
           future: criarOuPegarNotaExistente(context),
