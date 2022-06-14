@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:minhasnotas/constantes/rotas.dart';
+import 'package:minhasnotas/servicos/autenticacao/bloc/bloc_aut.dart';
+import 'package:minhasnotas/servicos/autenticacao/bloc/estado_aut.dart';
+import 'package:minhasnotas/servicos/autenticacao/bloc/event_aut.dart';
 import 'package:minhasnotas/servicos/autenticacao/excecao_aut.dart';
-import 'package:minhasnotas/servicos/autenticacao/servico_aut.dart';
 import '../utilidades/dialogos/dialogo_erro.dart';
 
 class TelaLogin extends StatefulWidget {
@@ -51,45 +54,31 @@ class _TelaLoginState extends State<TelaLogin> {
             decoration:
                 const InputDecoration(hintText: 'Escreva sua senha aqui!'),
           ),
-          TextButton(
-            onPressed: () async {
-              final email = _email.text;
-              final password = _password.text;
-              try {
-                ServicoAut.firebase().logIn(
-                  email: email,
-                  password: password,
-                );
-                final usuario = ServicoAut.firebase().currentUser;
-                if (usuario?.emailEstaVerificado ?? false) {
-                  Navigator.of(context).pushNamedAndRemoveUntil(
-                    notasRota,
-                    (route) => false,
-                  );
-                } else {
-                  Navigator.of(context).pushNamedAndRemoveUntil(
-                    verificarRotaEmail,
-                    (route) => false,
-                  );
+          BlocListener<AuthBloc, AuthState>(
+            listener: (context, state) async {
+              if (state is AuthStateLoggedOut) {
+                if (state.exception is UsuarioNaoEncontradoExcecao) {
+                  await mostrarErroDialogo(context, 'Usuario não encontrado');
+                } else if (state.exception is SenhaIncorretaExcecao) {
+                  await mostrarErroDialogo(context, 'Informação incorreta');
+                } else if (state.exception is GenericaExcecao) {
+                  await mostrarErroDialogo(context, 'Erro de autenticação');
                 }
-              } on UsuarioNaoEncontradoExcecao {
-                await mostrarErroDialogo(
-                  context,
-                  'Usuário não encontrado',
-                );
-              } on SenhaIncorretaExcecao {
-                await mostrarErroDialogo(
-                  context,
-                  'Senha incorreta',
-                );
-              } on GenericaExcecao {
-                await mostrarErroDialogo(
-                  context,
-                  'Erro de Autenticação',
-                );
               }
             },
-            child: const Text('Login'),
+            child: TextButton(
+              onPressed: () async {
+                final email = _email.text;
+                final password = _password.text;
+                context.read<AuthBloc>().add(
+                      AuthEventLogIn(
+                        email,
+                        password,
+                      ),
+                    );
+              },
+              child: const Text('Login'),
+            ),
           ),
           TextButton(
               onPressed: () {
