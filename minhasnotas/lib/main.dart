@@ -24,10 +24,6 @@ void main() {
         child: const HomePage(),
       ),
       routes: {
-        loginRota: (context) => const TelaLogin(),
-        registroRota: (context) => const TelaRegistro(),
-        notasRota: (context) => const TelaDeNotas(),
-        verificarRotaEmail: (context) => const TelaDeVerificacao(),
         criarOuAtualizarNotaRota: (context) => const CriarAtualizarNotaTela(),
       },
     ),
@@ -50,6 +46,8 @@ class HomePage extends StatelessWidget {
         return const TelaDeVerificacao();
       } else if (state is AuthStateLoggedOut) {
         return const TelaLogin();
+      } else if (state is AuthStateRegistering) {
+        return const TelaRegistro();
       } else {
         return const Scaffold(
           body: CircularProgressIndicator(),

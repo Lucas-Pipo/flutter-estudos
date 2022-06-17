@@ -25,25 +25,12 @@ class FirebaseArmazenamentoNuvem {
     }
   }
 
-  Stream<Iterable<NotaNuvem>> todasNotas({required String donoUsuarioId}) =>
-      notas.snapshots().map((event) => event.docs
-          .map((doc) => NotaNuvem.fromSnapshot(doc))
-          .where((nota) => nota.donoUsuarioId == donoUsuarioId));
-
-  Future<Iterable<NotaNuvem>> pegaNotas({required String donoUsuarioId}) async {
-    try {
-      return await notas
-          .where(
-            donoUsuarioIdCampoNome,
-            isEqualTo: donoUsuarioId,
-          )
-          .get()
-          .then(
-            (value) => value.docs.map((doc) => NotaNuvem.fromSnapshot(doc)),
-          );
-    } catch (e) {
-      throw NaoConseguiuPegarTodasAsNotasExcecao();
-    }
+  Stream<Iterable<NotaNuvem>> todasNotas({required String donoUsuarioId}) {
+    final todasNotas = notas
+        .where(donoUsuarioIdCampoNome, isEqualTo: donoUsuarioId)
+        .snapshots()
+        .map((event) => event.docs.map((doc) => NotaNuvem.fromSnapshot(doc)));
+    return todasNotas;
   }
 
   Future<NotaNuvem> criarNovaNota({required String donoUsuarioId}) async {

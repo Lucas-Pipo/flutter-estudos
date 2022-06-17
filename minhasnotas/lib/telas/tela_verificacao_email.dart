@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:minhasnotas/constantes/rotas.dart';
+import 'package:minhasnotas/servicos/autenticacao/bloc/bloc_aut.dart';
+import 'package:minhasnotas/servicos/autenticacao/bloc/event_aut.dart';
 import 'package:minhasnotas/servicos/autenticacao/servico_aut.dart';
 
 class TelaDeVerificacao extends StatefulWidget {
@@ -21,16 +24,18 @@ class _TelaDeVerificacaoState extends State<TelaDeVerificacao> {
           const Text(
               'Caso você não tenha recebido seu e-mail ainda, por favor pressione o botão abaixo'),
           TextButton(
-            onPressed: () async {
-              await ServicoAut.firebase().sendEmailVerification();
+            onPressed: () {
+              context.read<AuthBloc>().add(
+                    const AuthEventSendEmailVerification(),
+                  );
             },
             child: const Text('Me envie a confirmação de e-mail'),
           ),
           TextButton(
             onPressed: () async {
-              await ServicoAut.firebase().logOut();
-              Navigator.of(context)
-                  .pushNamedAndRemoveUntil(registroRota, (route) => false);
+              context.read<AuthBloc>().add(
+                    const AuthEventLogOut(),
+                  );
             },
             child: const Text('Reiniciar'),
           )

@@ -69,7 +69,7 @@ class _TelaDeNotasState extends State<TelaDeNotas> {
             case ConnectionState.waiting:
             case ConnectionState.active:
               if (snapshot.hasData) {
-                final todasNotas = snapshot.data as List<NotaNuvem>;
+                final todasNotas = snapshot.data as Iterable<NotaNuvem>;
                 return NotasListaTela(
                   notas: todasNotas,
                   aoDeletaNota: (nota) async {

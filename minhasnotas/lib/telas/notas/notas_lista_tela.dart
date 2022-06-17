@@ -5,7 +5,7 @@ import '../../utilidades/dialogos/dialogo_deletar.dart';
 typedef NotaCallback = void Function(NotaNuvem nota);
 
 class NotasListaTela extends StatelessWidget {
-  final List<NotaNuvem> notas;
+  final Iterable<NotaNuvem> notas;
   final NotaCallback aoDeletaNota;
   final NotaCallback aoClicar;
 

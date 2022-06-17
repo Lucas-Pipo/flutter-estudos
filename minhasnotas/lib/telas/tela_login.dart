@@ -5,6 +5,7 @@ import 'package:minhasnotas/servicos/autenticacao/bloc/bloc_aut.dart';
 import 'package:minhasnotas/servicos/autenticacao/bloc/estado_aut.dart';
 import 'package:minhasnotas/servicos/autenticacao/bloc/event_aut.dart';
 import 'package:minhasnotas/servicos/autenticacao/excecao_aut.dart';
+import 'package:minhasnotas/utilidades/dialogo_carregando.dart';
 import '../utilidades/dialogos/dialogo_erro.dart';
 
 class TelaLogin extends StatefulWidget {
@@ -17,6 +18,7 @@ class TelaLogin extends StatefulWidget {
 class _TelaLoginState extends State<TelaLogin> {
   late final TextEditingController _email;
   late final TextEditingController _password;
+  CloseDialog? _closeDialogHandle;
 
   @override
   void initState() {
@@ -34,39 +36,50 @@ class _TelaLoginState extends State<TelaLogin> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Login')),
-      body: Column(
-        children: [
-          TextField(
-            controller: _email,
-            enableSuggestions: false,
-            autocorrect: false,
-            keyboardType: TextInputType.emailAddress,
-            decoration:
-                const InputDecoration(hintText: 'Escreva seu e-mail aqui!'),
-          ),
-          TextField(
-            controller: _password,
-            obscureText: true,
-            enableSuggestions: false,
-            autocorrect: false,
-            decoration:
-                const InputDecoration(hintText: 'Escreva sua senha aqui!'),
-          ),
-          BlocListener<AuthBloc, AuthState>(
-            listener: (context, state) async {
-              if (state is AuthStateLoggedOut) {
-                if (state.exception is UsuarioNaoEncontradoExcecao) {
-                  await mostrarErroDialogo(context, 'Usuario não encontrado');
-                } else if (state.exception is SenhaIncorretaExcecao) {
-                  await mostrarErroDialogo(context, 'Informação incorreta');
-                } else if (state.exception is GenericaExcecao) {
-                  await mostrarErroDialogo(context, 'Erro de autenticação');
-                }
-              }
-            },
-            child: TextButton(
+    return BlocListener<AuthBloc, AuthState>(
+      listener: (context, state) async {
+        if (state is AuthStateLoggedOut) {
+          final closeDialog = _closeDialogHandle;
+
+          if (!state.isLoading && closeDialog != null) {
+            closeDialog();
+            _closeDialogHandle = null;
+          } else if (state.isLoading && closeDialog == null) {
+            _closeDialogHandle = showLoadingDialog(
+              context: context,
+              text: 'Carregando...',
+            );
+          }
+          if (state.exception is UsuarioNaoEncontradoExcecao) {
+            await mostrarErroDialogo(context, 'Usuario não encontrado');
+          } else if (state.exception is SenhaIncorretaExcecao) {
+            await mostrarErroDialogo(context, 'Informação incorreta');
+          } else if (state.exception is GenericaExcecao) {
+            await mostrarErroDialogo(context, 'Erro de autenticação');
+          }
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(title: const Text('Login')),
+        body: Column(
+          children: [
+            TextField(
+              controller: _email,
+              enableSuggestions: false,
+              autocorrect: false,
+              keyboardType: TextInputType.emailAddress,
+              decoration:
+                  const InputDecoration(hintText: 'Escreva seu e-mail aqui!'),
+            ),
+            TextField(
+              controller: _password,
+              obscureText: true,
+              enableSuggestions: false,
+              autocorrect: false,
+              decoration:
+                  const InputDecoration(hintText: 'Escreva sua senha aqui!'),
+            ),
+            TextButton(
               onPressed: () async {
                 final email = _email.text;
                 final password = _password.text;
@@ -79,14 +92,15 @@ class _TelaLoginState extends State<TelaLogin> {
               },
               child: const Text('Login'),
             ),
-          ),
-          TextButton(
-              onPressed: () {
-                Navigator.of(context)
-                    .pushNamedAndRemoveUntil(registroRota, (route) => false);
-              },
-              child: const Text('Ainda não é registrado? Registre aqui!'))
-        ],
+            TextButton(
+                onPressed: () {
+                  context.read<AuthBloc>().add(
+                        const AuthEventShouldRegister(),
+                      );
+                },
+                child: const Text('Ainda não é registrado? Registre aqui!'))
+          ],
+        ),
       ),
     );
   }
