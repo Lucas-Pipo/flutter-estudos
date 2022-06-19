@@ -11,6 +11,8 @@ import 'package:minhasnotas/telas/notas/tela_notas.dart';
 import 'package:minhasnotas/telas/tela_registro.dart';
 import 'package:minhasnotas/telas/tela_verificacao_email.dart';
 
+import 'ajudantes/carregamento/tela_carregamento.dart';
+
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(
@@ -36,10 +38,19 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     context.read<AuthBloc>().add(const AuthEventInitialize());
-    return BlocBuilder<AuthBloc, AuthState>(builder: (
+    return BlocConsumer<AuthBloc, AuthState>(listener: (
       context,
       state,
     ) {
+      if (state.isLoading) {
+        LoadingScreen().show(
+          context: context,
+          text: state.loadingText ?? 'Aguarde um momento',
+        );
+      } else {
+        LoadingScreen().hide();
+      }
+    }, builder: (context, state) {
       if (state is AuthStateLoggedIn) {
         return const TelaDeNotas();
       } else if (state is AuthStateNeedsVerification) {

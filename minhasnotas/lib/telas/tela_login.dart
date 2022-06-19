@@ -18,7 +18,6 @@ class TelaLogin extends StatefulWidget {
 class _TelaLoginState extends State<TelaLogin> {
   late final TextEditingController _email;
   late final TextEditingController _password;
-  CloseDialog? _closeDialogHandle;
 
   @override
   void initState() {
@@ -39,17 +38,6 @@ class _TelaLoginState extends State<TelaLogin> {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) async {
         if (state is AuthStateLoggedOut) {
-          final closeDialog = _closeDialogHandle;
-
-          if (!state.isLoading && closeDialog != null) {
-            closeDialog();
-            _closeDialogHandle = null;
-          } else if (state.isLoading && closeDialog == null) {
-            _closeDialogHandle = showLoadingDialog(
-              context: context,
-              text: 'Carregando...',
-            );
-          }
           if (state.exception is UsuarioNaoEncontradoExcecao) {
             await mostrarErroDialogo(context, 'Usuario não encontrado');
           } else if (state.exception is SenhaIncorretaExcecao) {
