@@ -5,6 +5,7 @@ import 'package:minhasnotas/servicos/autenticacao/bloc/bloc_aut.dart';
 import 'package:minhasnotas/servicos/autenticacao/bloc/estado_aut.dart';
 import 'package:minhasnotas/servicos/autenticacao/bloc/event_aut.dart';
 import 'package:minhasnotas/servicos/autenticacao/firebase_aut_provedor.dart';
+import 'package:minhasnotas/telas/esqueci_senha_tela.dart';
 import 'package:minhasnotas/telas/notas/criar_atualizar_nota_tela.dart';
 import 'package:minhasnotas/telas/tela_login.dart';
 import 'package:minhasnotas/telas/notas/tela_notas.dart';
@@ -57,6 +58,8 @@ class HomePage extends StatelessWidget {
         return const TelaDeVerificacao();
       } else if (state is AuthStateLoggedOut) {
         return const TelaLogin();
+      } else if (state is AuthStateForgotPassword) {
+        return const ForgotPasswordView();
       } else if (state is AuthStateRegistering) {
         return const TelaRegistro();
       } else {

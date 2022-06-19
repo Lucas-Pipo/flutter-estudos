@@ -39,7 +39,8 @@ class _TelaLoginState extends State<TelaLogin> {
       listener: (context, state) async {
         if (state is AuthStateLoggedOut) {
           if (state.exception is UsuarioNaoEncontradoExcecao) {
-            await mostrarErroDialogo(context, 'Usuario não encontrado');
+            await mostrarErroDialogo(context,
+                'Não foi possível encontrar um usuário com essa combinação!');
           } else if (state.exception is SenhaIncorretaExcecao) {
             await mostrarErroDialogo(context, 'Informação incorreta');
           } else if (state.exception is GenericaExcecao) {
@@ -48,46 +49,61 @@ class _TelaLoginState extends State<TelaLogin> {
         }
       },
       child: Scaffold(
-        appBar: AppBar(title: const Text('Login')),
-        body: Column(
-          children: [
-            TextField(
-              controller: _email,
-              enableSuggestions: false,
-              autocorrect: false,
-              keyboardType: TextInputType.emailAddress,
-              decoration:
-                  const InputDecoration(hintText: 'Escreva seu e-mail aqui!'),
-            ),
-            TextField(
-              controller: _password,
-              obscureText: true,
-              enableSuggestions: false,
-              autocorrect: false,
-              decoration:
-                  const InputDecoration(hintText: 'Escreva sua senha aqui!'),
-            ),
-            TextButton(
-              onPressed: () async {
-                final email = _email.text;
-                final password = _password.text;
-                context.read<AuthBloc>().add(
-                      AuthEventLogIn(
-                        email,
-                        password,
-                      ),
-                    );
-              },
-              child: const Text('Login'),
-            ),
-            TextButton(
-                onPressed: () {
+        appBar: AppBar(
+          title: const Text('Login'),
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              const Text(
+                'Por favor entre em sua conta para interagir com suas notas!',
+              ),
+              TextField(
+                controller: _email,
+                enableSuggestions: false,
+                autocorrect: false,
+                keyboardType: TextInputType.emailAddress,
+                decoration:
+                    const InputDecoration(hintText: 'Escreva seu e-mail aqui!'),
+              ),
+              TextField(
+                controller: _password,
+                obscureText: true,
+                enableSuggestions: false,
+                autocorrect: false,
+                decoration:
+                    const InputDecoration(hintText: 'Escreva sua senha aqui!'),
+              ),
+              TextButton(
+                onPressed: () async {
+                  final email = _email.text;
+                  final password = _password.text;
                   context.read<AuthBloc>().add(
-                        const AuthEventShouldRegister(),
+                        AuthEventLogIn(
+                          email,
+                          password,
+                        ),
                       );
                 },
-                child: const Text('Ainda não é registrado? Registre aqui!'))
-          ],
+                child: const Text('Login'),
+              ),
+              TextButton(
+                  onPressed: () {
+                    context.read<AuthBloc>().add(
+                          const AuthEventForgotPassword(),
+                        );
+                  },
+                  child: const Text('Esqueci minha senha')),
+              TextButton(
+                  onPressed: () {
+                    context.read<AuthBloc>().add(
+                          const AuthEventShouldRegister(),
+                        );
+                  },
+                  child: const Text('Ainda não é registrado? Registre aqui!'))
+            ],
+          ),
         ),
       ),
     );

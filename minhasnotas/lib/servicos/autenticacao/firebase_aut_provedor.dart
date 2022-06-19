@@ -9,7 +9,7 @@ import 'package:firebase_auth/firebase_auth.dart'
 
 class FirebaseAuthProvider implements ProvedorAut {
   @override
-  Future<void> initialize() async{
+  Future<void> initialize() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
@@ -102,6 +102,24 @@ class FirebaseAuthProvider implements ProvedorAut {
       await user.sendEmailVerification();
     } else {
       throw UsuarioNaoLogadoExcecao();
+    }
+  }
+
+  @override
+  Future<void> sendPasswordReset({required String toEmail}) async {
+    try {
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: toEmail);
+    } on FirebaseAuthException catch (e) {
+      switch (e.code) {
+        case 'firebase_auth/invalid-email':
+          throw EmailInvalidoExcecao();
+        case 'firebase_auth/user-not-found':
+          throw UsuarioNaoEncontradoExcecao();
+        default:
+          throw GenericaExcecao();
+      }
+    } catch (_) {
+      throw GenericaExcecao();
     }
   }
 }

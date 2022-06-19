@@ -39,4 +39,8 @@ class ServicoAut implements ProvedorAut {
 
   @override
   Future<void> initialize() => provedor.initialize();
+
+  @override
+  Future<void> sendPasswordReset({required String toEmail}) =>
+      provedor.sendPasswordReset(toEmail: toEmail);
 }
