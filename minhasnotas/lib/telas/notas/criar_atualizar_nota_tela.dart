@@ -3,7 +3,6 @@ import 'package:minhasnotas/servicos/autenticacao/servico_aut.dart';
 import 'package:minhasnotas/utilidades/dialogos/genericos/pega_argumentos.dart';
 import 'package:minhasnotas/servicos/nuvem/firebase_armazenamento_nuvem.dart';
 import 'package:minhasnotas/servicos/nuvem/nota_nuvem.dart';
-import 'package:minhasnotas/servicos/nuvem/excecoes_nuvem_armazenamento.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../utilidades/dialogos/nao_compartilhar_nota_vazia.dart';

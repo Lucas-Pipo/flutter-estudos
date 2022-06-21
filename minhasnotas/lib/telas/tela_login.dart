@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:minhasnotas/constantes/rotas.dart';
 import 'package:minhasnotas/servicos/autenticacao/bloc/bloc_aut.dart';
 import 'package:minhasnotas/servicos/autenticacao/bloc/estado_aut.dart';
 import 'package:minhasnotas/servicos/autenticacao/bloc/event_aut.dart';
 import 'package:minhasnotas/servicos/autenticacao/excecao_aut.dart';
-import 'package:minhasnotas/utilidades/dialogo_carregando.dart';
 import '../utilidades/dialogos/dialogo_erro.dart';
 
 class TelaLogin extends StatefulWidget {

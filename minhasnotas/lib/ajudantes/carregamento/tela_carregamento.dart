@@ -1,6 +1,4 @@
 import 'dart:async';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:minhasnotas/ajudantes/carregamento/controlador_tela_carregamento.dart';
 
