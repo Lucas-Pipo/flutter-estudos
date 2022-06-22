@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:minhasnotas/extensoes/construtordecontexto/loc.dart';
 import '../servicos/autenticacao/bloc/bloc_aut.dart';
 import '../servicos/autenticacao/bloc/estado_aut.dart';
 import 'package:minhasnotas/servicos/autenticacao/bloc/event_aut.dart';
@@ -40,47 +41,47 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
           if (state.exception != null) {
             await mostrarErroDialogo(
               context,
-              'Não conseguimos processar o seu pedido. Tenha certeza que você está registrado. Caso contrário, retorne uma tela e faça seu registro corretamente.',
-            );
+              context.loc.forgot_password_view_generic_error,            
+);
           }
         }
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Esqueci minha senha'),
+          title: Text(context.loc.forgot_password),
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              const Text(
-                'Caso você tenha esquecido sua senha, digite seu email e nós iremos enviar um link para redefinir sua senha.',
-              ),
-              TextField(
-                keyboardType: TextInputType.emailAddress,
-                autocorrect: false,
-                autofocus: true,
-                controller: _controller,
-                decoration: const InputDecoration(
-                  hintText: 'Seu endereço de email...',
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Text(context.loc.forgot_password_view_prompt),
+                TextField(
+                  keyboardType: TextInputType.emailAddress,
+                  autocorrect: false,
+                  autofocus: true,
+                  controller: _controller,
+                  decoration: InputDecoration(
+                    hintText: context.loc.email_text_field_placeholder,
+                  ),
                 ),
-              ),
-              TextButton(
-                onPressed: () {
-                  final email = _controller.text;
-                  context
-                      .read<AuthBloc>()
-                      .add(AuthEventForgotPassword(email: email));
-                },
-                child: const Text('Enviar link de redefinição de senha'),
-              ),
-              TextButton(
-                onPressed: () {
-                  context.read<AuthBloc>().add(const AuthEventLogOut());
-                },
-                child: const Text('Voltar para a tela de login'),
-              ),
-            ],
+                TextButton(
+                  onPressed: () {
+                    final email = _controller.text;
+                    context
+                        .read<AuthBloc>()
+                        .add(AuthEventForgotPassword(email: email));
+                  },
+                  child: Text(context.loc.forgot_password_view_send_me_link),
+                ),
+                TextButton(
+                  onPressed: () {
+                    context.read<AuthBloc>().add(const AuthEventLogOut());
+                  },
+                  child: Text(context.loc.forgot_password_view_back_to_login),
+                ),
+              ],
+            ),
           ),
         ),
       ),

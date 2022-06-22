@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:minhasnotas/extensoes/construtordecontexto/loc.dart';
 import 'package:minhasnotas/servicos/autenticacao/servico_aut.dart';
-import 'package:minhasnotas/utilidades/dialogos/genericos/pega_argumentos.dart';
+import 'package:minhasnotas/utilidades/genericos/pega_argumentos.dart';
 import 'package:minhasnotas/servicos/nuvem/firebase_armazenamento_nuvem.dart';
 import 'package:minhasnotas/servicos/nuvem/nota_nuvem.dart';
 import 'package:share_plus/share_plus.dart';
-
 import '../../utilidades/dialogos/nao_compartilhar_nota_vazia.dart';
 
 class CriarAtualizarNotaTela extends StatefulWidget {
@@ -94,12 +94,14 @@ class _CriarAtualizarNotaTelaState extends State<CriarAtualizarNotaTela> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Nova Nota'),
+          title: Text(
+            context.loc.note,
+          ),
           actions: [
             IconButton(
-              onPressed: () async{
+              onPressed: () async {
                 final texto = _textController.text;
-                if (_nota == null || texto.isEmpty){
+                if (_nota == null || texto.isEmpty) {
                   await mostrarNaoPodeCompartilharNotaVazia(context);
                 } else {
                   Share.share(texto);
@@ -119,8 +121,8 @@ class _CriarAtualizarNotaTelaState extends State<CriarAtualizarNotaTela> {
                   controller: _textController,
                   keyboardType: TextInputType.multiline,
                   maxLines: null,
-                  decoration: const InputDecoration(
-                    hintText: 'Comece a digitar a sua nota...',
+                  decoration: InputDecoration(
+                    hintText: context.loc.start_typing_your_note,
                   ),
                 );
               default:

@@ -11,13 +11,15 @@ import 'package:minhasnotas/telas/tela_login.dart';
 import 'package:minhasnotas/telas/notas/tela_notas.dart';
 import 'package:minhasnotas/telas/tela_registro.dart';
 import 'package:minhasnotas/telas/tela_verificacao_email.dart';
-
 import 'ajudantes/carregamento/tela_carregamento.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(
     MaterialApp(
+      supportedLocales: AppLocalizations.supportedLocales,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(

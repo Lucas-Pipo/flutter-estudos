@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:minhasnotas/extensoes/construtordecontexto/loc.dart';
 import 'package:minhasnotas/utilidades/dialogos/dialogo_generico.dart';
 
 Future<bool> dialogoLogOut(BuildContext contexto) {
   return mostrarDialogoGenerico<bool>(
     contexto: contexto,
-    titulo: 'Deslogar',
-    conteudo: 'Tem certeza que gostaria de deslogar?',
+    titulo: contexto.loc.logout_button,
+    conteudo: contexto.loc.logout_dialog_prompt,
     optionsBuilder: () => {
-      'Cancelar': false,
-      'Deslogar': true,
+      contexto.loc.cancel: false,
+      contexto.loc.logout_button: true,
     },
   ).then(
     (value) => value ?? false,

@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:minhasnotas/extensoes/construtordecontexto/loc.dart';
 import 'package:minhasnotas/utilidades/dialogos/dialogo_generico.dart';
 
 Future<void> showPasswordResetSentDialog(BuildContext context) {
   return mostrarDialogoGenerico(
     contexto: context,
-    titulo: 'Redefinição de Senha',
+    titulo: context.loc.password_reset,
     conteudo:
-        'Nós enviamos um link de redefinição de senha. Por favor verifique o seu email para mais informações.',
+        context.loc.password_reset_dialog_prompt,
     optionsBuilder: () => {
-      'OK': null,
+      context.loc.ok: null,
     },
   );
 }
