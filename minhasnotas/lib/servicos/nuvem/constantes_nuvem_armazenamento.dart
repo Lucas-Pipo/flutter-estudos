@@ -1,2 +1,2 @@
-const donoUsuarioIdCampoNome = 'usuario_id';
-const campoTextoNome = 'texto';
+const ownerUserIdFieldName = 'user_id';
+const textFieldName = 'text';

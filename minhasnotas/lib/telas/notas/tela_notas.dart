@@ -15,20 +15,20 @@ extension Count<T extends Iterable> on Stream<T> {
   Stream<int> get getLength => map((event) => event.length);
 }
 
-class TelaDeNotas extends StatefulWidget {
-  const TelaDeNotas({Key? key}) : super(key: key);
+class NotesView extends StatefulWidget {
+  const NotesView({Key? key}) : super(key: key);
 
   @override
-  State<TelaDeNotas> createState() => _TelaDeNotasState();
+  _NotesViewState createState() => _NotesViewState();
 }
 
-class _TelaDeNotasState extends State<TelaDeNotas> {
-  late final FirebaseArmazenamentoNuvem _servicoNotas;
-  String get usuarioId => ServicoAut.firebase().currentUser!.id;
+class _NotesViewState extends State<NotesView> {
+  late final FirebaseCloudStorage _notesService;
+  String get userId => AuthService.firebase().currentUser!.id;
 
   @override
   void initState() {
-    _servicoNotas = FirebaseArmazenamentoNuvem();
+    _notesService = FirebaseCloudStorage();
     super.initState();
   }
 
@@ -37,30 +37,30 @@ class _TelaDeNotasState extends State<TelaDeNotas> {
     return Scaffold(
       appBar: AppBar(
         title: StreamBuilder(
-            stream:
-                _servicoNotas.todasNotas(donoUsuarioId: usuarioId).getLength,
-            builder: (context, AsyncSnapshot<int> snapshot) {
-              if (snapshot.hasData) {
-                final noteCount = snapshot.data ?? 0;
-                final text = context.loc.notes_title(noteCount);
-                return Text(text);
-              } else {
-                return const Text('');
-              }
-            }),
+          stream: _notesService.allNotes(ownerUserId: userId).getLength,
+          builder: (context, AsyncSnapshot<int> snapshot) {
+            if (snapshot.hasData) {
+              final noteCount = snapshot.data ?? 0;
+              final text = context.loc.notes_title(noteCount);
+              return Text(text);
+            } else {
+              return const Text('');
+            }
+          },
+        ),
         actions: [
           IconButton(
             onPressed: () {
-              Navigator.of(context).pushNamed(criarOuAtualizarNotaRota);
+              Navigator.of(context).pushNamed(createOrUpdateNoteRoute);
             },
             icon: const Icon(Icons.add),
           ),
-          PopupMenuButton<MenuAcao>(
+          PopupMenuButton<MenuAction>(
             onSelected: (value) async {
               switch (value) {
-                case MenuAcao.logout:
-                  final deveDeslogar = await dialogoLogOut(context);
-                  if (deveDeslogar) {
+                case MenuAction.logout:
+                  final shouldLogout = await showLogOutDialog(context);
+                  if (shouldLogout) {
                     context.read<AuthBloc>().add(
                           const AuthEventLogOut(),
                         );
@@ -68,9 +68,9 @@ class _TelaDeNotasState extends State<TelaDeNotas> {
               }
             },
             itemBuilder: (context) {
-              return  [
-                PopupMenuItem<MenuAcao>(
-                  value: MenuAcao.logout,
+              return [
+                PopupMenuItem<MenuAction>(
+                  value: MenuAction.logout,
                   child: Text(context.loc.logout_button),
                 ),
               ];
@@ -79,23 +79,22 @@ class _TelaDeNotasState extends State<TelaDeNotas> {
         ],
       ),
       body: StreamBuilder(
-        stream: _servicoNotas.todasNotas(donoUsuarioId: usuarioId),
+        stream: _notesService.allNotes(ownerUserId: userId),
         builder: (context, snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.waiting:
             case ConnectionState.active:
               if (snapshot.hasData) {
-                final todasNotas = snapshot.data as Iterable<NotaNuvem>;
-                return NotasListaTela(
-                  notas: todasNotas,
-                  aoDeletaNota: (nota) async {
-                    await _servicoNotas.deletaNota(
-                        documentoId: nota.documentoId);
+                final allNotes = snapshot.data as Iterable<CloudNote>;
+                return NotesListView(
+                  notes: allNotes,
+                  onDeleteNote: (note) async {
+                    await _notesService.deleteNote(documentId: note.documentId);
                   },
-                  aoClicar: (nota) {
+                  onTap: (note) {
                     Navigator.of(context).pushNamed(
-                      criarOuAtualizarNotaRota,
-                      arguments: nota,
+                      createOrUpdateNoteRoute,
+                      arguments: note,
                     );
                   },
                 );

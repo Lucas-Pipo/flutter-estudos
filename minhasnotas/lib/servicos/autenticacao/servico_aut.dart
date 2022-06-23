@@ -2,45 +2,45 @@ import 'package:minhasnotas/servicos/autenticacao/firebase_aut_provedor.dart';
 import 'package:minhasnotas/servicos/autenticacao/provedor_aut.dart';
 import 'package:minhasnotas/servicos/autenticacao/usuario_aut.dart';
 
-class ServicoAut implements ProvedorAut {
-  final ProvedorAut provedor;
-  const ServicoAut(this.provedor);
+class AuthService implements AuthProvider {
+  final AuthProvider provider;
+  const AuthService(this.provider);
 
-  factory ServicoAut.firebase() => ServicoAut(FirebaseAuthProvider());
+  factory AuthService.firebase() => AuthService(FirebaseAuthProvider());
 
   @override
-  Future<UsuarioAut> createUser({
+  Future<AuthUser> createUser({
     required String email,
     required String password,
   }) =>
-      provedor.createUser(
+      provider.createUser(
         email: email,
         password: password,
       );
 
   @override
-  UsuarioAut? get currentUser => provedor.currentUser;
+  AuthUser? get currentUser => provider.currentUser;
 
   @override
-  Future<UsuarioAut> logIn({
+  Future<AuthUser> logIn({
     required String email,
     required String password,
   }) =>
-      provedor.logIn(
+      provider.logIn(
         email: email,
         password: password,
       );
 
   @override
-  Future<void> logOut() => provedor.logOut();
+  Future<void> logOut() => provider.logOut();
 
   @override
-  Future<void> sendEmailVerification() => provedor.sendEmailVerification();
+  Future<void> sendEmailVerification() => provider.sendEmailVerification();
 
   @override
-  Future<void> initialize() => provedor.initialize();
+  Future<void> initialize() => provider.initialize();
 
   @override
   Future<void> sendPasswordReset({required String toEmail}) =>
-      provedor.sendPasswordReset(toEmail: toEmail);
+      provider.sendPasswordReset(toEmail: toEmail);
 }

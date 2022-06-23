@@ -1,1 +1,1 @@
-const criarOuAtualizarNotaRota = '/notas/nova_tela_notas/';
+const createOrUpdateNoteRoute = '/notas/nova_tela_notas/';

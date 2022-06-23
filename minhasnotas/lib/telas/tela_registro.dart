@@ -7,14 +7,14 @@ import '../servicos/autenticacao/bloc/estado_aut.dart';
 import '../servicos/autenticacao/bloc/event_aut.dart';
 import '../utilidades/dialogos/dialogo_erro.dart';
 
-class TelaRegistro extends StatefulWidget {
-  const TelaRegistro({Key? key}) : super(key: key);
+class RegisterView extends StatefulWidget {
+  const RegisterView({Key? key}) : super(key: key);
 
   @override
-  State<TelaRegistro> createState() => _TelaRegistroState();
+  _RegisterViewState createState() => _RegisterViewState();
 }
 
-class _TelaRegistroState extends State<TelaRegistro> {
+class _RegisterViewState extends State<RegisterView> {
   late final TextEditingController _email;
   late final TextEditingController _password;
 
@@ -37,23 +37,23 @@ class _TelaRegistroState extends State<TelaRegistro> {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) async {
         if (state is AuthStateRegistering) {
-          if (state.exception is SenhaFracaExcecao) {
-            await mostrarErroDialogo(
+          if (state.exception is WeakPasswordAuthException) {
+            await showErrorDialog(
               context,
               context.loc.register_error_weak_password,
             );
-          } else if (state.exception is EmailEmUsoExececao) {
-            await mostrarErroDialogo(
+          } else if (state.exception is EmailAlreadyInUseAuthException) {
+            await showErrorDialog(
               context,
               context.loc.register_error_email_already_in_use,
             );
-          } else if (state.exception is EmailInvalidoExcecao) {
-            await mostrarErroDialogo(
+          } else if (state.exception is GenericAuthException) {
+            await showErrorDialog(
               context,
               context.loc.register_error_generic,
             );
-          } else if (state.exception is GenericaExcecao) {
-            await mostrarErroDialogo(
+          } else if (state.exception is InvalidEmailAuthException) {
+            await showErrorDialog(
               context,
               context.loc.register_error_invalid_email,
             );
@@ -61,7 +61,9 @@ class _TelaRegistroState extends State<TelaRegistro> {
         }
       },
       child: Scaffold(
-        appBar: AppBar(title: Text(context.loc.register)),
+        appBar: AppBar(
+          title: Text(context.loc.register),
+        ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: SingleChildScrollView(
@@ -76,7 +78,8 @@ class _TelaRegistroState extends State<TelaRegistro> {
                   autofocus: true,
                   keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
-                      hintText: context.loc.email_text_field_placeholder),
+                    hintText: context.loc.email_text_field_placeholder,
+                  ),
                 ),
                 TextField(
                   controller: _password,
@@ -84,7 +87,8 @@ class _TelaRegistroState extends State<TelaRegistro> {
                   enableSuggestions: false,
                   autocorrect: false,
                   decoration: InputDecoration(
-                      hintText: context.loc.password_text_field_placeholder),
+                    hintText: context.loc.password_text_field_placeholder,
+                  ),
                 ),
                 Center(
                   child: Column(
@@ -100,7 +104,9 @@ class _TelaRegistroState extends State<TelaRegistro> {
                                 ),
                               );
                         },
-                        child: Text(context.loc.register),
+                        child: Text(
+                          context.loc.register,
+                        ),
                       ),
                       TextButton(
                         onPressed: () {
@@ -111,7 +117,7 @@ class _TelaRegistroState extends State<TelaRegistro> {
                         child: Text(
                           context.loc.register_view_already_registered,
                         ),
-                      )
+                      ),
                     ],
                   ),
                 ),

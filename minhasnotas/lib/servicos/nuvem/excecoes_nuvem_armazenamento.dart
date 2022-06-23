@@ -9,7 +9,7 @@ class NaoConseguiuCriarNotaExcecao extends NuvemArmazenamentoExcecao {}
 class NaoConseguiuPegarTodasAsNotasExcecao extends NuvemArmazenamentoExcecao {}
 
 // U em CRUD
-class NaoConseguiuAtualizarNotasExcecao extends NuvemArmazenamentoExcecao {}
+class CouldNotUpdateNoteException extends NuvemArmazenamentoExcecao {}
 
 // D em CRUD
-class NaoConseguiuDeletarExececao extends NuvemArmazenamentoExcecao {}
+class CouldNotDeleteNoteException extends NuvemArmazenamentoExcecao {}

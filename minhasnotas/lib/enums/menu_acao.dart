@@ -1,1 +1,1 @@
-enum MenuAcao { logout }
+enum MenuAction { logout }

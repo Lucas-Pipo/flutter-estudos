@@ -4,7 +4,7 @@ import 'package:minhasnotas/servicos/autenticacao/bloc/event_aut.dart';
 import 'package:minhasnotas/servicos/autenticacao/provedor_aut.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  AuthBloc(ProvedorAut provider)
+  AuthBloc(AuthProvider provider)
       : super(const AuthStateUninitialized(isLoading: true)) {
     on<AuthEventShouldRegister>((event, emit) {
       emit(const AuthStateRegistering(
@@ -83,7 +83,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             isLoading: false,
           ),
         );
-      } else if (!user.emailEstaVerificado) {
+      } else if (!user.isEmailVerified) {
         emit(const AuthStateNeedsVerification(isLoading: false));
       } else {
         emit(AuthStateLoggedIn(user: user, isLoading: false));
@@ -106,7 +106,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           password: password,
         );
 
-        if (!user.emailEstaVerificado) {
+        if (!user.isEmailVerified) {
           emit(
             const AuthStateLoggedOut(
               exception: null,

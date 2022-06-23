@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:minhasnotas/utilidades/dialogos/dialogo_generico.dart';
 import 'package:minhasnotas/extensoes/construtordecontexto/loc.dart';
 
-Future<bool> mostrarDialogoDelete(BuildContext contexto) {
-  return mostrarDialogoGenerico<bool>(
-    contexto: contexto,
-    titulo: contexto.loc.delete,
-    conteudo: contexto.loc.delete_note_prompt,
+Future<bool> showDeleteDialog(BuildContext context) {
+  return showGenericDialog<bool>(
+    context: context,
+    title: context.loc.delete,
+    content: context.loc.delete_note_prompt,
     optionsBuilder: () => {
-      contexto.loc.cancel: false,
-      contexto.loc.yes: true,
+      context.loc.cancel: false,
+      context.loc.yes: true,
     },
   ).then(
     (value) => value ?? false,

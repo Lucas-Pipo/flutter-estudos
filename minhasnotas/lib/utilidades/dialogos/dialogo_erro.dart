@@ -2,16 +2,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:minhasnotas/extensoes/construtordecontexto/loc.dart';
 import 'package:minhasnotas/utilidades/dialogos/dialogo_generico.dart';
 
-Future<void> mostrarErroDialogo(
-  BuildContext contexto,
-  String texto,
+Future<void> showErrorDialog(
+  BuildContext context,
+  String text,
 ) {
-  return mostrarDialogoGenerico<void>(
-    contexto: contexto,
-    titulo: contexto.loc.generic_error_prompt,
-    conteudo: texto,
+  return showGenericDialog<void>(
+    context: context,
+    title: context.loc.generic_error_prompt,
+    content: text,
     optionsBuilder: () => {
-      contexto.loc.ok : null,
+      context.loc.ok: null,
     },
   );
 }

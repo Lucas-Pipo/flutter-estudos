@@ -1,0 +1,65 @@
+{
+  
+    "logout_button": "Deslogar",
+    "note": "Nota",
+    "cancel": "Cancelar",
+    "yes": "Sim",
+    "delete": "Deletar",
+    "sharing": "Comparilhar",
+    "ok": "OK",
+    "login": "Login",
+    "verify_email": "Verificar email",
+    "register": "Registrar",
+    "restart": "Restart",
+
+    "start_typing_your_note": "Comece a digitar sua nota",
+    "delete_note_prompt": "Tem certeza que quer deletar sua nota?",
+    "cannot_share_empty_note_prompt": "Não se pode criar notas vazias!",
+    "generic_error_prompt": "Um erro ocorreu",
+    "logout_dialog_prompt": "Tem certeza que quer deslogar?",
+
+    "password_reset": "Redefinir senha",
+    "password_reset_dialog_prompt": "Nós enviamos um link para seu email. Lá você encontrará mais informações.",
+
+    "login_error_cannot_find_user": "Não foi possível encontrar esse usuário",
+    "login_error_wrong_credentials": "Informações incorretas",
+    "login_error_auth_error": "Erro de autenticação",
+
+    "login_view_prompt": "Por favor, faça seu login para poder editar e criar suas notas!",
+    
+    "login_view_forgot_password": "Esqueci minha senha",
+    "login_view_not_registered_yet": "Ainda não está registrado? Registre-se aqui!",
+
+    "email_text_field_placeholder": "Digite seu email aqui",
+    "password_text_field_placeholder": "Digite sua senha aqui",
+    
+    "forgot_password": "Esqueci minha senha",
+    "forgot_password_view_generic_error": "Não conseguimos processar o seu pedido. Tenha certeza de que você está registrado, caso contrário, retorne uma tela e faça seu registro.",
+    "forgot_password_view_prompt": "Caso tenha esquecido sua senha, apenas digite seu email que lhe enviaremos um link para resolver a situação",
+    "forgot_password_view_send_me_link": "Envie um link de redefinição de senha",
+    "forgot_password_view_back_to_login": "Voltar a tela de login",
+
+    "register_error_weak_password": "Esta senha não é segura. Por favor escolha outra senha!",
+    "register_error_email_already_in_use": "Este email já está registrado para outro usuário. Por favor digite um email diferente.",
+    "register_error_generic": "Falha ao registrar. Tente novamente mais tarde!",
+    "register_error_invalid_email": "O email digitado parece inválido. Por favor tente outro email!",
+    "register_view_prompt": "Digite seu email e senha para que possa ver suas notas!",
+    "register_view_already_registered": "Já está registrado? Clique aqui!",
+
+    "verify_email_view_prompt": "Nós lhe enviamos um email de verificação. Por favor abra-o para verifica-la Se você ainda não recebeu o seu email, clique no botão abaixo para renviar!",
+    "verify_email_send_email_verification": "Enviar email de verificação",
+
+    "text_of_wait_loading": "Aguarde um momento",
+    "waiting_for_connection": "Aguarde enquanto eu te conecto",
+
+    "notes_title": "{count, plural, =0{Sem notas} =1{1 nota} other{{count} notas}}",
+    "@notes_title": {
+        "placeholders": {
+            "count": {
+                "type": "int",
+                "example": "3 notas"
+            }
+        }
+    }
+
+}

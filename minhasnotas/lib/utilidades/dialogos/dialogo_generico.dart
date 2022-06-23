@@ -2,19 +2,19 @@ import 'package:flutter/material.dart';
 
 typedef DialogoOpcionalBuilder<T> = Map<String, T?> Function();
 
-Future<T?> mostrarDialogoGenerico<T>({
-  required BuildContext contexto,
-  required String titulo,
-  required String conteudo,
+Future<T?> showGenericDialog<T>({
+  required BuildContext context,
+  required String title,
+  required String content,
   required DialogoOpcionalBuilder optionsBuilder,
 }) {
   final options = optionsBuilder();
   return showDialog<T>(
-    context: contexto,
+    context: context,
     builder: (context) {
       return AlertDialog(
-        title: Text(titulo),
-        content: Text(conteudo),
+        title: Text(title),
+        content: Text(content),
         actions: options.keys.map((optionTitle) {
           final valor = options[optionTitle];
           return TextButton(

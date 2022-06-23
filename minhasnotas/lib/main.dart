@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:minhasnotas/constantes/rotas.dart';
+import 'package:minhasnotas/extensoes/construtordecontexto/loc.dart';
 import 'package:minhasnotas/servicos/autenticacao/bloc/bloc_aut.dart';
 import 'package:minhasnotas/servicos/autenticacao/bloc/estado_aut.dart';
 import 'package:minhasnotas/servicos/autenticacao/bloc/event_aut.dart';
@@ -30,7 +32,7 @@ void main() {
         child: const HomePage(),
       ),
       routes: {
-        criarOuAtualizarNotaRota: (context) => const CriarAtualizarNotaTela(),
+        createOrUpdateNoteRoute: (context) => const CreateUpdateNoteView(),
       },
     ),
   );
@@ -49,22 +51,22 @@ class HomePage extends StatelessWidget {
       if (state.isLoading) {
         LoadingScreen().show(
           context: context,
-          text: state.loadingText ?? 'Aguarde um momento',
+          text: state.loadingText ?? context.loc.text_of_wait_loading,
         );
       } else {
         LoadingScreen().hide();
       }
     }, builder: (context, state) {
       if (state is AuthStateLoggedIn) {
-        return const TelaDeNotas();
+        return const NotesView();
       } else if (state is AuthStateNeedsVerification) {
-        return const TelaDeVerificacao();
+        return const VerifyEmailView();
       } else if (state is AuthStateLoggedOut) {
-        return const TelaLogin();
+        return const LoginView();
       } else if (state is AuthStateForgotPassword) {
         return const ForgotPasswordView();
       } else if (state is AuthStateRegistering) {
-        return const TelaRegistro();
+        return const RegisterView();
       } else {
         return const Scaffold(
           body: CircularProgressIndicator(),

@@ -7,34 +7,34 @@ import 'package:minhasnotas/servicos/nuvem/nota_nuvem.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../utilidades/dialogos/nao_compartilhar_nota_vazia.dart';
 
-class CriarAtualizarNotaTela extends StatefulWidget {
-  const CriarAtualizarNotaTela({Key? key}) : super(key: key);
+class CreateUpdateNoteView extends StatefulWidget {
+  const CreateUpdateNoteView({Key? key}) : super(key: key);
 
   @override
-  State<CriarAtualizarNotaTela> createState() => _CriarAtualizarNotaTelaState();
+  _CreateUpdateNoteViewState createState() => _CreateUpdateNoteViewState();
 }
 
-class _CriarAtualizarNotaTelaState extends State<CriarAtualizarNotaTela> {
-  NotaNuvem? _nota;
-  late final FirebaseArmazenamentoNuvem _servicoNotas;
+class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
+  CloudNote? _note;
+  late final FirebaseCloudStorage _notesService;
   late final TextEditingController _textController;
 
   @override
   void initState() {
-    _servicoNotas = FirebaseArmazenamentoNuvem();
+    _notesService = FirebaseCloudStorage();
     _textController = TextEditingController();
     super.initState();
   }
 
   void _textControllerListener() async {
-    final nota = _nota;
-    if (nota == null) {
+    final note = _note;
+    if (note == null) {
       return;
     }
     final text = _textController.text;
-    await _servicoNotas.atualizarNota(
-      documentoId: nota.documentoId,
-      texto: text,
+    await _notesService.updateNote(
+      documentId: note.documentId,
+      text: text,
     );
   }
 
@@ -43,49 +43,48 @@ class _CriarAtualizarNotaTelaState extends State<CriarAtualizarNotaTela> {
     _textController.addListener(_textControllerListener);
   }
 
-  Future<NotaNuvem> criarOuPegarNotaExistente(BuildContext context) async {
-    final notaWidget = context.pegaArgumento<NotaNuvem>();
+  Future<CloudNote> createOrGetExistingNote(BuildContext context) async {
+    final widgetNote = context.getArgument<CloudNote>();
 
-    if (notaWidget != null) {
-      _nota = notaWidget;
-      _textController.text = notaWidget.texto;
-      return notaWidget;
+    if (widgetNote != null) {
+      _note = widgetNote;
+      _textController.text = widgetNote.text;
+      return widgetNote;
     }
 
-    final notaExistente = _nota;
-    if (notaExistente != null) {
-      return notaExistente;
+    final existingNote = _note;
+    if (existingNote != null) {
+      return existingNote;
     }
-    final currentUser = ServicoAut.firebase().currentUser!;
-    final usuarioId = currentUser.id;
-    final novaNota =
-        await _servicoNotas.criarNovaNota(donoUsuarioId: usuarioId);
-    _nota = novaNota;
-    return novaNota;
+    final currentUser = AuthService.firebase().currentUser!;
+    final userId = currentUser.id;
+    final newNote = await _notesService.createNewNote(ownerUserId: userId);
+    _note = newNote;
+    return newNote;
   }
 
-  void _deletaNotaSeTextoVazio() {
-    final nota = _nota;
-    if (_textController.text.isEmpty && nota != null) {
-      _servicoNotas.deletaNota(documentoId: nota.documentoId);
+  void _deleteNoteIfTextIsEmpty() {
+    final note = _note;
+    if (_textController.text.isEmpty && note != null) {
+      _notesService.deleteNote(documentId: note.documentId);
     }
   }
 
-  void _salvaNotaSeTextoVazio() async {
-    final nota = _nota;
+  void _saveNoteIfTextNotEmpty() async {
+    final note = _note;
     final text = _textController.text;
-    if (nota != null && text.isNotEmpty) {
-      await _servicoNotas.atualizarNota(
-        documentoId: nota.documentoId,
-        texto: text,
+    if (note != null && text.isNotEmpty) {
+      await _notesService.updateNote(
+        documentId: note.documentId,
+        text: text,
       );
     }
   }
 
   @override
   void dispose() {
-    _deletaNotaSeTextoVazio();
-    _salvaNotaSeTextoVazio();
+    _deleteNoteIfTextIsEmpty();
+    _saveNoteIfTextNotEmpty();
     _textController.dispose();
     super.dispose();
   }
@@ -93,42 +92,43 @@ class _CriarAtualizarNotaTelaState extends State<CriarAtualizarNotaTela> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text(
-            context.loc.note,
-          ),
-          actions: [
-            IconButton(
-              onPressed: () async {
-                final texto = _textController.text;
-                if (_nota == null || texto.isEmpty) {
-                  await mostrarNaoPodeCompartilharNotaVazia(context);
-                } else {
-                  Share.share(texto);
-                }
-              },
-              icon: const Icon(Icons.share),
-            ),
-          ],
+      appBar: AppBar(
+        title: Text(
+          context.loc.note,
         ),
-        body: FutureBuilder(
-          future: criarOuPegarNotaExistente(context),
-          builder: (context, snapshot) {
-            switch (snapshot.connectionState) {
-              case ConnectionState.done:
-                _setupTextControllerListener();
-                return TextField(
-                  controller: _textController,
-                  keyboardType: TextInputType.multiline,
-                  maxLines: null,
-                  decoration: InputDecoration(
-                    hintText: context.loc.start_typing_your_note,
-                  ),
-                );
-              default:
-                return const CircularProgressIndicator();
-            }
-          },
-        ));
+        actions: [
+          IconButton(
+            onPressed: () async {
+              final text = _textController.text;
+              if (_note == null || text.isEmpty) {
+                await showCannotShareEmptyNoteDialog(context);
+              } else {
+                Share.share(text);
+              }
+            },
+            icon: const Icon(Icons.share),
+          ),
+        ],
+      ),
+      body: FutureBuilder(
+        future: createOrGetExistingNote(context),
+        builder: (context, snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.done:
+              _setupTextControllerListener();
+              return TextField(
+                controller: _textController,
+                keyboardType: TextInputType.multiline,
+                maxLines: null,
+                decoration: InputDecoration(
+                  hintText: context.loc.start_typing_your_note,
+                ),
+              );
+            default:
+              return const CircularProgressIndicator();
+          }
+        },
+      ),
+    );
   }
 }

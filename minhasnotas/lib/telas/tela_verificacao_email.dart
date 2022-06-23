@@ -4,28 +4,28 @@ import 'package:minhasnotas/extensoes/construtordecontexto/loc.dart';
 import 'package:minhasnotas/servicos/autenticacao/bloc/bloc_aut.dart';
 import 'package:minhasnotas/servicos/autenticacao/bloc/event_aut.dart';
 
-class TelaDeVerificacao extends StatefulWidget {
-  const TelaDeVerificacao({Key? key}) : super(key: key);
+class VerifyEmailView extends StatefulWidget {
+  const VerifyEmailView({Key? key}) : super(key: key);
 
   @override
-  State<TelaDeVerificacao> createState() => _TelaDeVerificacaoState();
+  _VerifyEmailViewState createState() => _VerifyEmailViewState();
 }
 
-class _TelaDeVerificacaoState extends State<TelaDeVerificacao> {
+class _VerifyEmailViewState extends State<VerifyEmailView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          context.loc.verify_email,
-        ),
+        title: Text(context.loc.verify_email),
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Text(context.loc.verify_email_view_prompt),
+              child: Text(
+                context.loc.verify_email_view_prompt,
+              ),
             ),
             TextButton(
               onPressed: () {
@@ -33,7 +33,9 @@ class _TelaDeVerificacaoState extends State<TelaDeVerificacao> {
                       const AuthEventSendEmailVerification(),
                     );
               },
-              child: Text(context.loc.verify_email_send_email_verification),
+              child: Text(
+                context.loc.verify_email_send_email_verification,
+              ),
             ),
             TextButton(
               onPressed: () async {
@@ -41,7 +43,9 @@ class _TelaDeVerificacaoState extends State<TelaDeVerificacao> {
                       const AuthEventLogOut(),
                     );
               },
-              child: Text(context.loc.restart),
+              child: Text(
+                context.loc.restart,
+              ),
             )
           ],
         ),

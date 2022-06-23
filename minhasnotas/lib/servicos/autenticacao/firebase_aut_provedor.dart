@@ -7,7 +7,7 @@ import 'package:minhasnotas/servicos/autenticacao/provedor_aut.dart';
 import 'package:firebase_auth/firebase_auth.dart'
     show FirebaseAuth, FirebaseAuthException;
 
-class FirebaseAuthProvider implements ProvedorAut {
+class FirebaseAuthProvider implements AuthProvider {
   @override
   Future<void> initialize() async {
     await Firebase.initializeApp(
@@ -16,7 +16,7 @@ class FirebaseAuthProvider implements ProvedorAut {
   }
 
   @override
-  Future<UsuarioAut> createUser({
+  Future<AuthUser> createUser({
     required String email,
     required String password,
   }) async {
@@ -25,39 +25,39 @@ class FirebaseAuthProvider implements ProvedorAut {
         email: email,
         password: password,
       );
-      final usuario = currentUser;
-      if (usuario != null) {
-        return usuario;
+      final user = currentUser;
+      if (user != null) {
+        return user;
       } else {
-        throw UsuarioNaoEncontradoExcecao();
+        throw UserNotLoggedInAuthException();
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
-        throw SenhaFracaExcecao();
+        throw WeakPasswordAuthException();
       } else if (e.code == 'email-already-in-use') {
-        throw EmailEmUsoExececao();
+        throw EmailAlreadyInUseAuthException();
       } else if (e.code == 'invalid-email') {
-        throw EmailInvalidoExcecao();
+        throw InvalidEmailAuthException();
       } else {
-        throw GenericaExcecao();
+        throw GenericAuthException();
       }
     } catch (_) {
-      throw GenericaExcecao();
+      throw GenericAuthException();
     }
   }
 
   @override
-  UsuarioAut? get currentUser {
-    final usuario = FirebaseAuth.instance.currentUser;
-    if (usuario != null) {
-      return UsuarioAut.fromFirebase(usuario);
+  AuthUser? get currentUser {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      return AuthUser.fromFirebase(user);
     } else {
       return null;
     }
   }
 
   @override
-  Future<UsuarioAut> logIn({
+  Future<AuthUser> logIn({
     required String email,
     required String password,
   }) async {
@@ -66,22 +66,22 @@ class FirebaseAuthProvider implements ProvedorAut {
         email: email,
         password: password,
       );
-      final usuario = currentUser;
-      if (usuario != null) {
-        return usuario;
+      final user = currentUser;
+      if (user != null) {
+        return user;
       } else {
-        throw UsuarioNaoEncontradoExcecao();
+        throw UserNotLoggedInAuthException();
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
-        throw UsuarioNaoEncontradoExcecao();
+        throw UserNotFoundAuthException();
       } else if (e.code == 'wrong-password') {
-        throw SenhaIncorretaExcecao();
+        throw WrongPasswordAuthException();
       } else {
-        throw GenericaExcecao();
+        throw GenericAuthException();
       }
     } catch (_) {
-      throw GenericaExcecao();
+      throw GenericAuthException();
     }
   }
 
@@ -91,7 +91,7 @@ class FirebaseAuthProvider implements ProvedorAut {
     if (user != null) {
       await FirebaseAuth.instance.signOut();
     } else {
-      throw UsuarioNaoLogadoExcecao();
+      throw UserNotLoggedInAuthException();
     }
   }
 
@@ -101,7 +101,7 @@ class FirebaseAuthProvider implements ProvedorAut {
     if (user != null) {
       await user.sendEmailVerification();
     } else {
-      throw UsuarioNaoLogadoExcecao();
+      throw UserNotLoggedInAuthException();
     }
   }
 
@@ -112,14 +112,14 @@ class FirebaseAuthProvider implements ProvedorAut {
     } on FirebaseAuthException catch (e) {
       switch (e.code) {
         case 'firebase_auth/invalid-email':
-          throw EmailInvalidoExcecao();
+          throw InvalidEmailAuthException();
         case 'firebase_auth/user-not-found':
-          throw UsuarioNaoEncontradoExcecao();
+          throw UserNotFoundAuthException();
         default:
-          throw GenericaExcecao();
+          throw GenericAuthException();
       }
     } catch (_) {
-      throw GenericaExcecao();
+      throw GenericAuthException();
     }
   }
 }

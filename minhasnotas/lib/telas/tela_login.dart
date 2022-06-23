@@ -7,14 +7,14 @@ import 'package:minhasnotas/servicos/autenticacao/bloc/event_aut.dart';
 import 'package:minhasnotas/servicos/autenticacao/excecao_aut.dart';
 import '../utilidades/dialogos/dialogo_erro.dart';
 
-class TelaLogin extends StatefulWidget {
-  const TelaLogin({Key? key}) : super(key: key);
+class LoginView extends StatefulWidget {
+  const LoginView({Key? key}) : super(key: key);
 
   @override
-  State<TelaLogin> createState() => _TelaLoginState();
+  State<LoginView> createState() => _LoginViewState();
 }
 
-class _TelaLoginState extends State<TelaLogin> {
+class _LoginViewState extends State<LoginView> {
   late final TextEditingController _email;
   late final TextEditingController _password;
 
@@ -37,18 +37,18 @@ class _TelaLoginState extends State<TelaLogin> {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) async {
         if (state is AuthStateLoggedOut) {
-          if (state.exception is UsuarioNaoEncontradoExcecao) {
-            await mostrarErroDialogo(
+          if (state.exception is UserNotFoundAuthException) {
+            await showErrorDialog(
               context,
               context.loc.login_error_cannot_find_user,
             );
-          } else if (state.exception is SenhaIncorretaExcecao) {
-            await mostrarErroDialogo(
+          } else if (state.exception is WrongPasswordAuthException) {
+            await showErrorDialog(
               context,
               context.loc.login_error_wrong_credentials,
             );
-          } else if (state.exception is GenericaExcecao) {
-            await mostrarErroDialogo(
+          } else if (state.exception is GenericAuthException) {
+            await showErrorDialog(
               context,
               context.loc.login_error_auth_error,
             );
@@ -64,22 +64,24 @@ class _TelaLoginState extends State<TelaLogin> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                 Text(context.loc.login_view_prompt),
+                Text(context.loc.login_view_prompt),
                 TextField(
                   controller: _email,
                   enableSuggestions: false,
                   autocorrect: false,
                   keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
-                      hintText: context.loc.email_text_field_placeholder),
+                    hintText: context.loc.email_text_field_placeholder,
+                  ),
                 ),
                 TextField(
                   controller: _password,
                   obscureText: true,
                   enableSuggestions: false,
                   autocorrect: false,
-                  decoration:  InputDecoration(
-                      hintText: context.loc.password_text_field_placeholder),
+                  decoration: InputDecoration(
+                    hintText: context.loc.password_text_field_placeholder,
+                  ),
                 ),
                 TextButton(
                   onPressed: () async {
@@ -92,22 +94,28 @@ class _TelaLoginState extends State<TelaLogin> {
                           ),
                         );
                   },
-                  child:Text(context.loc.login),
+                  child: Text(context.loc.login),
                 ),
                 TextButton(
-                    onPressed: () {
-                      context.read<AuthBloc>().add(
-                            const AuthEventForgotPassword(),
-                          );
-                    },
-                    child: Text(context.loc.login_view_forgot_password)),
+                  onPressed: () {
+                    context.read<AuthBloc>().add(
+                          const AuthEventForgotPassword(),
+                        );
+                  },
+                  child: Text(
+                    context.loc.login_view_forgot_password,
+                  ),
+                ),
                 TextButton(
-                    onPressed: () {
-                      context.read<AuthBloc>().add(
-                            const AuthEventShouldRegister(),
-                          );
-                    },
-                    child: Text(context.loc.login_view_not_registered_yet))
+                  onPressed: () {
+                    context.read<AuthBloc>().add(
+                          const AuthEventShouldRegister(),
+                        );
+                  },
+                  child: Text(
+                    context.loc.login_view_not_registered_yet,
+                  ),
+                )
               ],
             ),
           ),

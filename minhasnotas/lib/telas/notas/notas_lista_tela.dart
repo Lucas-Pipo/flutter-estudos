@@ -2,41 +2,41 @@ import 'package:flutter/material.dart';
 import 'package:minhasnotas/servicos/nuvem/nota_nuvem.dart';
 import '../../utilidades/dialogos/dialogo_deletar.dart';
 
-typedef NotaCallback = void Function(NotaNuvem nota);
+typedef NoteCallback = void Function(CloudNote note);
 
-class NotasListaTela extends StatelessWidget {
-  final Iterable<NotaNuvem> notas;
-  final NotaCallback aoDeletaNota;
-  final NotaCallback aoClicar;
+class NotesListView extends StatelessWidget {
+  final Iterable<CloudNote> notes;
+  final NoteCallback onDeleteNote;
+  final NoteCallback onTap;
 
-  const NotasListaTela({
+  const NotesListView({
     Key? key,
-    required this.notas,
-    required this.aoDeletaNota,
-    required this.aoClicar,
+    required this.notes,
+    required this.onDeleteNote,
+    required this.onTap,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      itemCount: notas.length,
+      itemCount: notes.length,
       itemBuilder: (context, index) {
-        final nota = notas.elementAt(index);
+        final note = notes.elementAt(index);
         return ListTile(
           onTap: () {
-            aoClicar(nota);
+            onTap(note);
           },
           title: Text(
-            nota.texto,
+            note.text,
             maxLines: 1,
             softWrap: true,
             overflow: TextOverflow.ellipsis,
           ),
           trailing: IconButton(
             onPressed: () async {
-              final deveDeletar = await mostrarDialogoDelete(context);
-              if (deveDeletar) {
-                aoDeletaNota(nota);
+              final shouldDelete = await showDeleteDialog(context);
+              if (shouldDelete) {
+                onDeleteNote(note);
               }
             },
             icon: const Icon(Icons.delete),

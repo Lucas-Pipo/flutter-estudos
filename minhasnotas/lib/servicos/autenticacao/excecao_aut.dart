@@ -1,17 +1,17 @@
 // exceções de login
-class UsuarioNaoEncontradoExcecao implements Exception {}
+class UserNotFoundAuthException implements Exception {}
 
-class SenhaIncorretaExcecao implements Exception {}
+class WrongPasswordAuthException implements Exception {}
 
 // exceções de registro
-class SenhaFracaExcecao implements Exception {}
+class WeakPasswordAuthException implements Exception {}
 
-class EmailEmUsoExececao implements Exception {}
+class EmailAlreadyInUseAuthException implements Exception {}
 
-class EmailInvalidoExcecao implements Exception {}
+class InvalidEmailAuthException implements Exception {}
 
 // exceções genéricas
 
-class GenericaExcecao implements Exception {}
+class GenericAuthException implements Exception {}
 
-class UsuarioNaoLogadoExcecao implements Exception {}
+class UserNotLoggedInAuthException implements Exception {}

@@ -3,18 +3,18 @@ import 'package:minhasnotas/servicos/nuvem/constantes_nuvem_armazenamento.dart';
 import 'package:flutter/foundation.dart';
 
 @immutable
-class NotaNuvem {
-  final String documentoId;
-  final String donoUsuarioId;
-  final String texto;
-  const NotaNuvem({
-    required this.documentoId,
-    required this.donoUsuarioId,
-    required this.texto,
+class CloudNote {
+  final String documentId;
+  final String ownerUserId;
+  final String text;
+  const CloudNote({
+    required this.documentId,
+    required this.ownerUserId,
+    required this.text,
   });
 
-  NotaNuvem.fromSnapshot(QueryDocumentSnapshot<Map<String, dynamic>> snapshot)
-      : documentoId = snapshot.id,
-        donoUsuarioId = snapshot.data()[donoUsuarioIdCampoNome],
-        texto = snapshot.data()[campoTextoNome] as String;
+  CloudNote.fromSnapshot(QueryDocumentSnapshot<Map<String, dynamic>> snapshot)
+      : documentId = snapshot.id,
+        ownerUserId = snapshot.data()[ownerUserIdFieldName],
+        text = snapshot.data()[textFieldName] as String;
 }

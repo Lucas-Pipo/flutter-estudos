@@ -3,51 +3,51 @@ import 'package:minhasnotas/servicos/nuvem/constantes_nuvem_armazenamento.dart';
 import 'package:minhasnotas/servicos/nuvem/excecoes_nuvem_armazenamento.dart';
 import 'package:minhasnotas/servicos/nuvem/nota_nuvem.dart';
 
-class FirebaseArmazenamentoNuvem {
-  final notas = FirebaseFirestore.instance.collection('notas');
+class FirebaseCloudStorage {
+  final notes = FirebaseFirestore.instance.collection('notes');
 
-  Future<void> deletaNota({required String documentoId}) async {
+  Future<void> deleteNote({required String documentId}) async {
     try {
-      await notas.doc(documentoId).delete();
+      await notes.doc(documentId).delete();
     } catch (e) {
-      throw NaoConseguiuDeletarExececao();
+      throw CouldNotDeleteNoteException();
     }
   }
 
-  Future<void> atualizarNota({
-    required String documentoId,
-    required String texto,
+  Future<void> updateNote({
+    required String documentId,
+    required String text,
   }) async {
     try {
-      await notas.doc(documentoId).update({campoTextoNome: texto});
+      await notes.doc(documentId).update({textFieldName: text});
     } catch (e) {
-      throw NaoConseguiuAtualizarNotasExcecao();
+      throw CouldNotUpdateNoteException();
     }
   }
 
-  Stream<Iterable<NotaNuvem>> todasNotas({required String donoUsuarioId}) {
-    final todasNotas = notas
-        .where(donoUsuarioIdCampoNome, isEqualTo: donoUsuarioId)
+  Stream<Iterable<CloudNote>> allNotes({required String ownerUserId}) {
+    final allNotes = notes
+        .where(ownerUserIdFieldName, isEqualTo: ownerUserId)
         .snapshots()
-        .map((event) => event.docs.map((doc) => NotaNuvem.fromSnapshot(doc)));
-    return todasNotas;
+        .map((event) => event.docs.map((doc) => CloudNote.fromSnapshot(doc)));
+    return allNotes;
   }
 
-  Future<NotaNuvem> criarNovaNota({required String donoUsuarioId}) async {
-    final documento = await notas.add({
-      donoUsuarioIdCampoNome: donoUsuarioId,
-      campoTextoNome: '',
+  Future<CloudNote> createNewNote({required String ownerUserId}) async {
+    final document = await notes.add({
+      ownerUserIdFieldName: ownerUserId,
+      textFieldName: '',
     });
-    final notaFechada = await documento.get();
-    return NotaNuvem(
-      documentoId: notaFechada.id,
-      donoUsuarioId: donoUsuarioId,
-      texto: '',
+    final fetchedNote = await document.get();
+    return CloudNote(
+      documentId: fetchedNote.id,
+      ownerUserId: ownerUserId,
+      text: '',
     );
   }
 
-  static final FirebaseArmazenamentoNuvem _shared =
-      FirebaseArmazenamentoNuvem._sharedInstance();
-  FirebaseArmazenamentoNuvem._sharedInstance();
-  factory FirebaseArmazenamentoNuvem() => _shared;
+  static final FirebaseCloudStorage _shared =
+      FirebaseCloudStorage._sharedInstance();
+  FirebaseCloudStorage._sharedInstance();
+  factory FirebaseCloudStorage() => _shared;
 }
