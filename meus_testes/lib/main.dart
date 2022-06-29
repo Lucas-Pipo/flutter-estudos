@@ -1,3 +1,5 @@
+import 'package:meus_testes/countdown_page.dart';
+import 'package:meus_testes/countdown_timer_page.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -10,54 +12,51 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Aplicativo de Teste',
-      debugShowCheckedModeBanner: false,
+      title: 'Flutter Demo',
       theme: ThemeData(
-        primarySwatch: Colors.yellow,
+        primarySwatch: Colors.blue,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: const PrimeiraTela(),
+      home: MyHomePage(),
     );
   }
 }
 
-class PrimeiraTela extends StatefulWidget {
-  const PrimeiraTela({
-    Key? key,
-  }) : super(key: key);
+class MyHomePage extends StatefulWidget {
 
   @override
-  State<PrimeiraTela> createState() => MinhaTelaInicial();
+  _MyHomePageState createState() => _MyHomePageState();
 }
 
-class MinhaTelaInicial extends State<PrimeiraTela> {
-  int contador = 0;
-
-  void _incrementarContador() {
-    setState(() {
-      contador--;
-    });
-  }
+class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Center(
-          child: Text('Funciona?'),
-        ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: <Widget>[
+          buildItem("countdown", const CountdownPage()),
+          buildItem("countdown page", const CountdownTimerPage()),
+        ],
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text('Você apertou o botão $contador vezes!'),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementarContador,
-        tooltip: 'Subtrair',
-        child: const Icon(Icons.remove),
+    );
+  }
+
+  Widget buildItem(String title, Widget page) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).push(MaterialPageRoute(builder: (_) {
+          return page;
+        }));
+      },
+      child: Container(
+        margin: const EdgeInsets.all(5),
+        color: Colors.blue,
+        width: double.infinity,
+        alignment: Alignment.center,
+        height: 100,
+        child: Text(title, style: const TextStyle(fontSize: 36),),
       ),
     );
   }
